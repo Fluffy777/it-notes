@@ -6,8 +6,15 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class PrimaryController {
-    @RequestMapping(path = "/index")
+    @RequestMapping(path = "/")
     public ModelAndView index() {
+        ModelAndView modelAndView = new ModelAndView("index");
+        modelAndView.setViewName("index");
+        return modelAndView;
+    }
+
+    @RequestMapping(path = "/index")
+    public ModelAndView other() {
         ModelAndView modelAndView = new ModelAndView("index");
         modelAndView.setViewName("index");
         return modelAndView;
