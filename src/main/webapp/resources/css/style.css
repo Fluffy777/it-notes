@@ -63,3 +63,58 @@ body {
 .control-to-top:hover {
   color: #ffc737;
 }
+
+.article {
+
+}
+
+.article__body {
+
+}
+
+.article__header {
+
+}
+
+.article__title {
+
+}
+
+.article__text {
+
+}
+
+.aside-col {
+
+}
+
+.aside-col__header {
+
+}
+
+.aside-col__nav {
+
+}
+
+.aside-col__list-group {
+
+}
+
+.aside-col__list-group-item {
+
+}
+
+.aside-col__list-group-item:hover {
+  background-color: #ffe182;
+}
+
+.aside-col__list-group-item-link {
+  width: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+.aside-col__list-group-item-link:hover {
+  color: inherit;
+}
+
