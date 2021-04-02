@@ -7,6 +7,6 @@
 </head>
 <body>
     <p>Other page</p>
-    <img src="<c:url value="/resources/img/common/logo.png" />" class="rounded float-start" alt="">
+    <img src="<c:url value="/resources/static/img/common/logo.png" />" class="rounded float-start" alt="">
 </body>
 </html>
