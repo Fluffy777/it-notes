@@ -2,6 +2,6 @@ package com.fluffy.spring.daos;
 
 import java.io.Serializable;
 
-public interface Identified<PK extends Serializable> {
+public interface Identifiable<PK extends Serializable> {
     PK getId();
 }

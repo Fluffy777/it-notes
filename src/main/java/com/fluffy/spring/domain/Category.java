@@ -1,14 +1,18 @@
 package com.fluffy.spring.domain;
 
-import com.fluffy.spring.daos.Identified;
+import com.fluffy.spring.daos.Identifiable;
 
-public class Category implements Identified<Integer> {
+public class Category implements Identifiable<Integer> {
     private Integer id;
     private String name;
 
     @Override
     public Integer getId() {
         return id;
+    }
+
+    protected void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {

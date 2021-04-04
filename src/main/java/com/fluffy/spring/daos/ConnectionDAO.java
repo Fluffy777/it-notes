@@ -1,9 +1,12 @@
 package com.fluffy.spring.daos;
 
+import org.springframework.stereotype.Component;
+
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+@Component
 public class ConnectionDAO {
     private final DataSource dataSource;
 

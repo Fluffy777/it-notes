@@ -1,10 +1,10 @@
 package com.fluffy.spring.domain;
 
-import com.fluffy.spring.daos.Identified;
+import com.fluffy.spring.daos.Identifiable;
 
 import java.sql.Date;
 
-public class Article implements Identified<Integer> {
+public class Article implements Identifiable<Integer> {
     private Integer id;
     private Category category;
     private User user;
@@ -15,6 +15,10 @@ public class Article implements Identified<Integer> {
     @Override
     public Integer getId() {
         return id;
+    }
+
+    protected void setId(Integer id) {
+        this.id = id;
     }
 
     public Category getCategory() {
