@@ -2,6 +2,7 @@ package com.fluffy.spring.daos.impls;
 
 import com.fluffy.spring.daos.AbstractDAO;
 import com.fluffy.spring.daos.ConnectionDAO;
+import com.fluffy.spring.daos.RoleDAO;
 import com.fluffy.spring.domain.Role;
 import com.fluffy.spring.exceptions.PersistException;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Component
-public class OracleRoleDAO extends AbstractDAO<Role, Integer> {
+public class OracleRoleDAO extends AbstractDAO<Role, Integer>  {
     private static class PersistRole extends Role {
         public void setId(Integer id) {
             super.setId(id);
