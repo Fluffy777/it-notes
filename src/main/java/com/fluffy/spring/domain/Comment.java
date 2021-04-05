@@ -1,23 +1,20 @@
 package com.fluffy.spring.domain;
 
-import com.fluffy.spring.daos.Identifiable;
-
 import java.sql.Timestamp;
 
-public class Comment implements Identifiable<Integer> {
-    private Integer id;
+public class Comment {
+    private int id;
     private Article article;
     private Comment parent;
     private User user;
     private String content;
     private Timestamp timestamp;
 
-    @Override
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    protected void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -59,5 +56,17 @@ public class Comment implements Identifiable<Integer> {
 
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
+    }
+
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "id=" + id +
+                ", article=" + article +
+                ", parent=" + parent +
+                ", user=" + user +
+                ", content='" + content + '\'' +
+                ", timestamp=" + timestamp +
+                '}';
     }
 }

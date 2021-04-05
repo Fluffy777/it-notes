@@ -1,17 +1,14 @@
 package com.fluffy.spring.domain;
 
-import com.fluffy.spring.daos.Identifiable;
-
-public class Role implements Identifiable<Integer> {
-    private Integer id;
+public class Role {
+    private int id;
     private String name;
 
-    @Override
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    protected void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -21,5 +18,13 @@ public class Role implements Identifiable<Integer> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

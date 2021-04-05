@@ -1,6 +1,6 @@
 package com.fluffy.spring.exceptions;
 
-public class PersistException extends Exception {
+public class PersistException extends RuntimeException {
     public PersistException() {
     }
 

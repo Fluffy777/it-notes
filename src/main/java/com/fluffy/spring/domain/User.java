@@ -1,12 +1,12 @@
 package com.fluffy.spring.domain;
 
-import com.fluffy.spring.daos.Identifiable;
-
 import java.sql.Date;
+import java.util.Arrays;
+import java.util.Set;
 
-public class User implements Identifiable<Integer> {
-    private Integer id;
-    private Role role;
+public class User {
+    private int id;
+    private Set<Role> roles;
     private boolean enabled;
     private String firstName;
     private String lastName;
@@ -24,21 +24,12 @@ public class User implements Identifiable<Integer> {
         FEMALE;
     }
 
-    @Override
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    protected void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
     }
 
     public boolean isEnabled() {
@@ -127,5 +118,23 @@ public class User implements Identifiable<Integer> {
 
     public void setIcon(byte[] icon) {
         this.icon = icon;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", enabled=" + enabled +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", gender=" + gender +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", rday=" + rday +
+                ", bday=" + bday +
+                ", description='" + description + '\'' +
+                ", address='" + address + '\'' +
+                ", icon=" + Arrays.toString(icon) +
+                '}';
     }
 }

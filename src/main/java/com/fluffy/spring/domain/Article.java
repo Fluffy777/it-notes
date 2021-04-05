@@ -1,23 +1,20 @@
 package com.fluffy.spring.domain;
 
-import com.fluffy.spring.daos.Identifiable;
-
 import java.sql.Date;
 
-public class Article implements Identifiable<Integer> {
-    private Integer id;
+public class Article {
+    private int id;
     private Category category;
     private User user;
     private String name;
     private String content;
     private Date modificationDate;
 
-    @Override
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    protected void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -59,5 +56,17 @@ public class Article implements Identifiable<Integer> {
 
     public void setModificationDate(Date modificationDate) {
         this.modificationDate = modificationDate;
+    }
+
+    @Override
+    public String toString() {
+        return "Article{" +
+                "id=" + id +
+                ", category=" + category +
+                ", user=" + user +
+                ", name='" + name + '\'' +
+                ", content='" + content + '\'' +
+                ", modificationDate=" + modificationDate +
+                '}';
     }
 }
