@@ -7,9 +7,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -27,9 +28,28 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
         this.env = env;
     }
 
+    /*
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
+    }
+     */
+
+    @Bean
+    public InternalResourceViewResolver viewResolver(
+            @Value("${application.view.prefix}") String prefix,
+            @Value("${application.view.suffix}") String suffix) {
+        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+        viewResolver.setPrefix(prefix);
+        viewResolver.setSuffix(suffix);
+        return viewResolver;
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry
+                .addResourceHandler(env.getProperty("application.static-path-pattern"))
+                .addResourceLocations(env.getProperty("application.resources.static-locations"));
     }
 
     @Bean

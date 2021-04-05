@@ -2,26 +2,38 @@ package com.fluffy.spring.daos.impls;
 
 import com.fluffy.spring.daos.ConnectionDAO;
 import com.fluffy.spring.daos.UserDAO;
+import com.fluffy.spring.daos.UserRoleDTO;
 import com.fluffy.spring.domain.User;
 import com.fluffy.spring.exceptions.DBConnectionException;
 import com.fluffy.spring.exceptions.PersistException;
+import org.springframework.stereotype.Component;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
 import java.util.LinkedList;
 import java.util.List;
 
+@Component
 public class OracleUserDAO implements UserDAO {
     private static final String QUERY_GET_ALL = "SELECT * FROM users";
     private static final String QUERY_GET = QUERY_GET_ALL + " WHERE user_id = ?";
+    private static final String QUERY_GET_BY_EMAIL = "SELECT * FROM users WHERE email = ?";
     private static final String QUERY_INSERT = "INSERT INTO users (name) VALUES (?)";
-    private static final String QUERY_UPDATE = "UPDATE users  WHERE user_id = ?";
+    private static final String QUERY_UPDATE = "UPDATE users SET enabled = ?, first_name = ?, last_name = ?, gender = ?, email = ?, password = ?, rday = ?, bday = ?, description = ?, address = ?, icon = ? WHERE user_id = ?";
     private static final String QUERY_DELETE = "DELETE FROM users WHERE user_id = ?";
+    private final UserRoleDTO userRoleDTO;
     private final ConnectionDAO connectionDAO;
 
     private User newInstance(final ResultSet resultSet) throws SQLException {
         User user = new User();
-        user.setId(resultSet.getInt("user_id"));
+        int userId = resultSet.getInt("user_id");
+        user.setId(userId);
         // roles
+        user.setRoles(userRoleDTO.getAllByUserId(userId));
         user.setEnabled(resultSet.getString("enabled").equals("Y"));
         user.setFirstName(resultSet.getString("first_name"));
         user.setLastName(resultSet.getString("last_name"));
@@ -36,28 +48,28 @@ public class OracleUserDAO implements UserDAO {
         return user;
     }
 
-    public OracleUserDAO(ConnectionDAO connectionDAO) {
+    public OracleUserDAO(final ConnectionDAO connectionDAO, final UserRoleDTO userRoleDTO) {
         this.connectionDAO = connectionDAO;
+        this.userRoleDTO = userRoleDTO;
     }
 
     @Override
-    public User get(int primaryKey) {
+    public User getById(final int userId) {
         try (Connection connection = connectionDAO.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(QUERY_GET);
             int seq = 0;
-            statement.setInt(++seq, primaryKey);
+            statement.setInt(++seq, userId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     User user = newInstance(resultSet);
                     if (resultSet.next()) {
-                        throw new PersistException("Існує декілька користувачів, у яких user_id = " + primaryKey);
+                        throw new PersistException("Існує декілька користувачів, у яких user_id = " + userId);
                     }
                     return user;
-                } else {
-                    return null;
                 }
+                return null;
             } catch (SQLException e) {
-                throw new PersistException("Не вдалося виконати запит на отримання даних про користувача, у якого user_id = " + primaryKey, e);
+                throw new PersistException("Не вдалося виконати запит на отримання даних про користувача, у якого user_id = " + userId, e);
             }
         } catch (SQLException e) {
             throw new DBConnectionException("Не вдалося отримати з'єднання із базою даних", e);
@@ -83,7 +95,28 @@ public class OracleUserDAO implements UserDAO {
     }
 
     @Override
-    public void insert(User user) {
+    public User getByEmail(final String email) {
+        try (Connection connection = connectionDAO.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(QUERY_GET_BY_EMAIL);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    User user = newInstance(resultSet);
+                    if (resultSet.next()) {
+                        throw new PersistException("Існує декілька користувачів, у яких email = " + email);
+                    }
+                    return user;
+                }
+                return null;
+            } catch (SQLException e) {
+                throw new PersistException("Не вдалося виконати запит на отримання даних про користувача, у якого email = " + email, e);
+            }
+        } catch (SQLException e) {
+            throw new DBConnectionException("Не вдалося отримати з'єднання із базою даних", e);
+        }
+    }
+
+    @Override
+    public void insert(final User user) {
         try (Connection connection = connectionDAO.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(QUERY_INSERT)) {
                 int seq = 0;
@@ -112,11 +145,23 @@ public class OracleUserDAO implements UserDAO {
     }
 
     @Override
-    public void update(int primaryKey, User user) {
+    public void update(final int primaryKey, final User user) {
         try (Connection connection = connectionDAO.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(QUERY_UPDATE)) {
                 int seq = 0;
-                // TODO: ...
+                statement.setString(++seq, user.isEnabled() ? "Y" : "N");
+                statement.setString(++seq, user.getFirstName());
+                statement.setString(++seq, user.getLastName());
+                statement.setString(++seq, user.getGender().equals(User.Gender.MALE) ? "M" : "F");
+                statement.setString(++seq, user.getEmail());
+                statement.setString(++seq, user.getPassword());
+                statement.setDate(++seq, user.getRday());
+                statement.setDate(++seq, user.getBday());
+                statement.setString(++seq, user.getDescription());
+                statement.setString(++seq, user.getAddress());
+                statement.setNull(++seq, Types.BLOB);
+                //statement.setBlob(++seq, user.getIcon());
+                statement.setInt(++seq, primaryKey);
 
                 if (statement.executeUpdate() == 0) {
                     throw new PersistException("Не вдалося оновити дані про користувача " + user.toString() + " у базі даних");
@@ -130,7 +175,20 @@ public class OracleUserDAO implements UserDAO {
     }
 
     @Override
-    public void delete(int primaryKey) {
+    public void delete(final int primaryKey) {
+        try (Connection connection = connectionDAO.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(QUERY_DELETE)) {
+                int seq = 0;
+                statement.setInt(++seq, primaryKey);
 
+                if (statement.executeUpdate() == 0) {
+                    throw new PersistException("Не вдалося видалити дані про користувача, у якого user_id = " + primaryKey);
+                }
+            } catch (SQLException e) {
+                throw new PersistException("Не вдалося виконати запит на видалення інформації про користувача");
+            }
+        } catch (SQLException e) {
+            throw new DBConnectionException("Не вдалося отримати з'єднання із базою даних", e);
+        }
     }
 }

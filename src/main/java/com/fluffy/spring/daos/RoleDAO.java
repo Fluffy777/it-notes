@@ -5,13 +5,7 @@ import com.fluffy.spring.domain.Role;
 import java.util.List;
 
 public interface RoleDAO {
-    Role get(int primaryKey);
+    Role getById(int roleId);
 
     List<Role> getAll();
-
-    void insert(Role role);
-
-    void update(int primaryKey, Role role);
-
-    void delete(int primaryKey);
 }

@@ -32,6 +32,14 @@ public class User {
         this.id = id;
     }
 
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
     public boolean isEnabled() {
         return enabled;
     }
