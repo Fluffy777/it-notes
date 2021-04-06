@@ -17,8 +17,8 @@
                 <i class="header__nav-item-content bi bi-person-circle float-end"></i>
             </div>
             <ul class="dropdown-menu dropdown-menu-end">
-                <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#authModal">Авторизація</button></li>
-                <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#regModal">Реєстрація</button></li>
+                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/login">Авторизація</a></li>
+                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/signup">Реєстрація</a></li>
             </ul>
         </div>
     </nav>

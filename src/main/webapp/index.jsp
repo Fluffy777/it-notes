@@ -13,6 +13,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+
     <link rel="stylesheet" href="<c:url value="/resources/static/css/style.css"/>">
 <body>
     <!-- header -->
@@ -127,62 +128,6 @@
 
     <!-- fixed controls -->
     <jsp:include page="/WEB-INF/components/fixed-controls.jsp"/>
-
-    <!-- Auth modal -->
-    <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true" style="z-index: 10000;">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="authModalLabel">Авторизація</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form class="p-1" action="auth.php" method="POST">
-                        <div class="mb-3">
-                            <label class="form-label" for="input-auth-name">Ім'я</label>
-                            <input class="form-control" type="text" name="name" id="input-auth-name" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label" for="input-auth-password">Пароль</label>
-                            <input class="form-control" type="password" name="password" id="input-auth-password" required>
-                        </div>
-
-                        <button class="btn btn-primary" id="auth-submit-btn" type="submit" disabled>Авторизуватися</button>
-                        <button class="btn btn-secondary" id="auth-reset-btn" type="reset">Очистити</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Reg modal -->
-    <div class="modal fade" id="regModal" tabindex="-1" aria-labelledby="regModalLabel" aria-hidden="true" style="z-index: 10000;">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="regModalLabel">Створення облікового запису</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form class="p-1" action="reg.php" method="POST">
-                        <div class="mb-3">
-                            <label class="form-label" for="input-reg-name">Ім'я</label>
-                            <input class="form-control" type="text" name="name" id="input-reg-name" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label" for="input-reg-password">Пароль</label>
-                            <input class="form-control" type="password" name="password" id="input-reg-password" required>
-                        </div>
-
-                        <button class="btn btn-primary" id="reg-submit-btn" type="submit" disabled>Зареєструватися</button>
-                        <button class="btn btn-secondary" id="reg-reset-btn" type="reset">Очистити</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>

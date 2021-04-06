@@ -3,6 +3,7 @@ package com.fluffy.spring.configurations.security;
 import com.fluffy.spring.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 
