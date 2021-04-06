@@ -4,4 +4,6 @@ import com.fluffy.spring.domain.User;
 
 public interface UserService {
     User findByEmail(String email);
+
+    boolean create(User user);
 }

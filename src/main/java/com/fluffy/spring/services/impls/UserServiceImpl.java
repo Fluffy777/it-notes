@@ -3,20 +3,31 @@ package com.fluffy.spring.services.impls;
 import com.fluffy.spring.daos.UserDAO;
 import com.fluffy.spring.domain.User;
 import com.fluffy.spring.services.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.Date;
 
 @Service
 public class UserServiceImpl implements UserService {
     private final UserDAO userDAO;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserDAO userDAO) {
+    public UserServiceImpl(UserDAO userDAO, PasswordEncoder passwordEncoder) {
         this.userDAO = userDAO;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public User findByEmail(String email) {
         return userDAO.getByEmail(email);
+    }
+
+    @Override
+    public boolean create(User user) {
+        user.setEnabled(true);
+        user.setRday(new java.sql.Date(new Date().getTime()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userDAO.insert(user);
     }
 }

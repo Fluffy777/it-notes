@@ -4,6 +4,12 @@
 
 <html lang="uk">
 <head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Fluffy">
+    <meta name="description" content="Корисні статті із фрагментами коду, що допоможуть під час розробки Ваших проектів.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="shortcut icon" type="image/x-icon" href="<c:url value="/resources/static/img/common/favicon.ico"/>">
     <title>Реєстрація</title>
 
     <!-- Bootstrap CSS -->
@@ -62,8 +68,7 @@
                         <label class="form-label" for="input-address">Адреса</label>
                         <form:input path="address" class="form-control" type="text" name="address" id="input-address"/>
                     </div>
-
-                    <button class="btn btn-success w-100" type="submit" disabled>Зареєструватися</button>
+                    <button class="btn btn-success w-100" type="submit">Зареєструватися</button>
                 </form:form>
             </div>
         </div>
