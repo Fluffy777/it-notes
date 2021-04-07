@@ -6,13 +6,16 @@ import com.fluffy.spring.validation.forms.LogInForm;
 import com.fluffy.spring.validation.forms.SignUpForm;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.Validator;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class AuthController {
@@ -34,8 +37,11 @@ public class AuthController {
     }
 
     @GetMapping("/login")
-    public String logInView(ModelMap modelMap) {
-        modelMap.addAttribute("logInForm", new SignUpForm());
+    public String logInView(@RequestParam(name = "error", required = false) boolean error, ModelMap modelMap) {
+        modelMap.addAttribute("logInForm", new LogInForm());
+        if (error) {
+            modelMap.addAttribute("error", true);
+        }
         return "/auth/login";
     }
 
@@ -45,9 +51,9 @@ public class AuthController {
         return "/auth/signup";
     }
 
-    @PostMapping("signup/request")
+    @PostMapping("/signup")
     public String signUp(
-            @Validated @ModelAttribute("signUpForm") SignUpForm signUpForm,
+            @Validated @ModelAttribute(name = "signUpForm") SignUpForm signUpForm,
             BindingResult result) {
         if (result.hasErrors()) {
             return "/auth/signup";
@@ -60,13 +66,5 @@ public class AuthController {
 
         userService.create(ConversionUtils.convert(signUpForm));
         return "redirect:/login";
-    }
-
-    @PostMapping("login/request")
-    @ResponseBody
-    public String logIn(
-            @Validated @ModelAttribute("logInForm") LogInForm logInForm,
-            BindingResult result) {
-        return "Cool!";
     }
 }

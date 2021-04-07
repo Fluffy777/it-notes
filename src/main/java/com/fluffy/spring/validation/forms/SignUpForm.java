@@ -1,7 +1,5 @@
 package com.fluffy.spring.validation.forms;
 
-import org.springframework.stereotype.Component;
-
 public class SignUpForm {
     private String firstName;
     private String lastName;

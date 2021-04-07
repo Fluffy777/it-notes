@@ -22,8 +22,13 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-auto">
-                <form:form modelAttribute="logInForm" class="border border-primary p-4 rounded" action="login/request" method="POST">
+                <form:form modelAttribute="logInForm" class="border border-primary p-4 rounded" action="${pageContext.request.contextPath}/login/processing" method="POST">
                     <h1>Вхід до облікового запису</h1>
+                    <c:if test='${param.get("error") == true}'>
+                        <div class="text-danger mb-5">
+                            <small>Електронна пошта або пароль вказані неправильно.</small>
+                        </div>
+                    </c:if>
                     <div class="mb-3">
                         <label class="form-label" for="input-email">Електронна пошта</label>
                         <form:input path="email" class="form-control" type="text" name="email" id="input-email" required="required"/>
@@ -33,7 +38,13 @@
                         <label class="form-label" for="input-password">Пароль</label>
                         <form:input path="password" class="form-control" type="password" name="password" id="input-password" required="required"/>
                     </div>
-                    <button class="btn btn-success w-100" type="submit">Авторизуватися</button>
+                    <button class="btn btn-success w-100 mb-3" type="submit">Авторизуватися</button>
+
+                    <div class="text-center">
+                        <a href="${pageContext.request.contextPath}/">На головну</a>
+                        ·
+                        <a href="${pageContext.request.contextPath}/signup">Реєстрація</a>
+                    </div>
                 </form:form>
             </div>
         </div>

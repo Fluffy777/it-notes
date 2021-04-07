@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -17,8 +20,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-@EnableWebMvc
 @Configuration
+@EnableWebMvc
 @ComponentScan(basePackages = "com.fluffy.spring")
 @PropertySource("classpath:application.properties")
 public class ApplicationConfiguration implements WebMvcConfigurer {
@@ -28,11 +31,13 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
         this.env = env;
     }
 
+
     /*
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
     }
+
      */
 
     @Bean
@@ -53,7 +58,7 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public DataSource getDataSource(
+    public DataSource dataSource(
             @Value("${application.data-source.configuration-type}") String configurationType) {
         if (configurationType.equals(env.getProperty("application.data-source.configuration-type-option.driver-manager"))) {
             DriverManagerDataSource dataSource = new DriverManagerDataSource(
@@ -78,5 +83,11 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
             }
         }
         return null;
+    }
+
+    // для розв'язання циклічної залежності між SecurityConfiguration та AuthenticationProviderImpl
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(Integer.parseInt(env.getProperty("application.security.password-encoder-strength")));
     }
 }

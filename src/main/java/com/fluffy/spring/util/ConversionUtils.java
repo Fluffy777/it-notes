@@ -8,7 +8,9 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class ConversionUtils {
+public final class ConversionUtils {
+    private ConversionUtils() { }
+
     public static User convert(LogInForm logInForm) {
         User user = new User();
         user.setEmail(logInForm.getEmail());

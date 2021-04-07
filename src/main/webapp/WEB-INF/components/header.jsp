@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 
 <header class="header mb-4">
     <nav class="header__nav navbar row p-2">
@@ -17,8 +18,16 @@
                 <i class="header__nav-item-content bi bi-person-circle float-end"></i>
             </div>
             <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/login">Авторизація</a></li>
-                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/signup">Реєстрація</a></li>
+                <security:authorize access="!isAnonymous()">
+                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/profile">Профіль</a></li>
+                </security:authorize>
+                <security:authorize access="isAnonymous()">
+                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/login">Авторизація</a></li>
+                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/signup">Реєстрація</a></li>
+                </security:authorize>
+                <security:authorize access="!isAnonymous()">
+                    <li><a class="dropdown-item" href="${pageContext.request.contextPath}/logout">Вихід</a></li>
+                </security:authorize>
             </ul>
         </div>
     </nav>

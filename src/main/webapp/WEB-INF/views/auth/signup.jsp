@@ -22,7 +22,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-auto">
-                <form:form modelAttribute="signUpForm" class="border border-primary p-4 rounded" action="signup/request" method="POST">
+                <form:form modelAttribute="signUpForm" class="border border-primary p-4 rounded" action="${pageContext.request.contextPath}/signup" method="post">
                     <h1>Створення облікового запису</h1>
                     <div class="row mb-3">
                         <div class="col">
@@ -68,7 +68,13 @@
                         <label class="form-label" for="input-address">Адреса</label>
                         <form:input path="address" class="form-control" type="text" name="address" id="input-address"/>
                     </div>
-                    <button class="btn btn-success w-100" type="submit">Зареєструватися</button>
+                    <button class="btn btn-success w-100 mb-3" type="submit">Зареєструватися</button>
+
+                    <div class="text-center">
+                        <a href="${pageContext.request.contextPath}/">На головну</a>
+                        ·
+                        <a href="${pageContext.request.contextPath}/login">Авторизація</a>
+                    </div>
                 </form:form>
             </div>
         </div>
