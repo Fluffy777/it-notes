@@ -13,7 +13,7 @@ public interface UserDAO {
 
     boolean insert(User user);
 
-    boolean update(int userId, User role);
+    boolean update(int userId, User user);
 
     boolean delete(int userId);
 }

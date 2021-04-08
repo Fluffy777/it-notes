@@ -122,3 +122,8 @@ body {
   width: 150px;
   height: 150px;
 }
+
+input+span {
+  font-size: 0.75em;
+  color: #dc3545;
+}

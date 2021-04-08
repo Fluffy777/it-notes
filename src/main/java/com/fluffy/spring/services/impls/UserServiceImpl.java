@@ -25,9 +25,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean create(User user) {
+        // під час створення вважаємо, що користувач не є заблокованим, а часом
+        // регістрації - цей момент
         user.setEnabled(true);
         user.setRday(new java.sql.Date(new Date().getTime()));
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userDAO.insert(user);
+    }
+
+    @Override
+    public boolean update(int userId, User user) {
+        return userDAO.update(userId, user);
     }
 }

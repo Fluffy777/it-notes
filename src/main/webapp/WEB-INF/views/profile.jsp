@@ -38,7 +38,7 @@
     <div class="container">
         <div class="profile row">
             <div class="col-auto">
-                <form:form modelAttribute="userDataForm" class="border border-primary p-4 rounded" action="${pageContext.request.contextPath}/update-profile" method="post">
+                <form:form modelAttribute="userDataForm" class="border border-primary p-4 rounded" action="${pageContext.request.contextPath}/profile" method="post">
                     <div class="col-auto">
                         <img class="profile__logo" src="" alt="Фото">
                     </div>
@@ -46,11 +46,13 @@
                         <div class="row mb-3">
                             <div class="col">
                                 <label class="form-label" for="input-first-name">Ім'я</label>
-                                <form:input path="firstName" class="form-control" type="text" name="first-name" id="input-first-name" value="<%=userData.getFirstName()%>" required="required"/>
+                                <form:input path="firstName" class="form-control" type="text" name="first-name" id="input-first-name" value="<%=userData.getFirstName()%>" maxlength="50" required="required"/>
+                                <form:errors path="firstName"/>
                             </div>
                             <div class="col">
                                 <label class="form-label" for="input-last-name">Прізвище</label>
-                                <form:input path="lastName" class="form-control" type="text" name="last-name" id="input-last-name" value="<%=userData.getLastName()%>" required="required"/>
+                                <form:input path="lastName" class="form-control" type="text" name="last-name" id="input-last-name" value="<%=userData.getLastName()%>" maxlength="50" required="required"/>
+                                <form:errors path="lastName"/>
                             </div>
                         </div>
 
@@ -76,42 +78,50 @@
                                     <label class="form-check-label" for="female">Жінка</label>
                                 </div>
                                 <%} %>
+                                <form:errors path="gender"/>
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="input-email">Електронна пошта</label>
-                            <form:input path="email" class="form-control" type="text" name="email" id="input-email" value="<%=userData.getEmail()%>" required="required"/>
+                            <form:input path="email" class="form-control" type="text" name="email" id="input-email" value="<%=userData.getEmail()%>" maxlength="320" required="required"/>
+                            <form:errors path="email"/>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="input-password">Пароль</label>
-                            <form:input path="password" class="form-control" type="password" name="password" id="input-password" required="required"/>
+                            <form:input path="password" class="form-control" type="password" name="password" id="input-password" maxlength="60" required="required"/>
+                            <form:errors path="password"/>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="input-new-password">Новий пароль</label>
-                            <form:input path="newPassword" class="form-control" type="password" name="new-password" id="input-new-password"/>
+                            <form:input path="newPassword" class="form-control" type="password" name="new-password" id="input-new-password" maxlength="60"/>
+                            <form:errors path="newPassword"/>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="input-new-password-again">Новий пароль (ще раз)</label>
-                            <form:input path="newPasswordAgain" class="form-control" type="password" name="new-password-again" id="input-new-password-again"/>
+                            <form:input path="newPasswordAgain" class="form-control" type="password" name="new-password-again" id="input-new-password-again" maxlength="60"/>
+                            <form:errors path="newPasswordAgain"/>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="input-bday">Дата народження</label>
-                            <form:input path="bday" class="form-control" type="text" name="bday" id="input-bday" value='<%=bdayValue%>' placeholder="dd/mm/yyyy"/>
+                            <form:input path="bday" class="form-control" type="text" name="bday" id="input-bday" value='<%=bdayValue%>' placeholder="dd/mm/yyyy" maxlength="10"/>
+                            <form:errors path="bday"/>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="input-address">Адреса</label>
-                            <form:input path="address" class="form-control" type="text" name="address" value="<%=userData.getAddress()%>" id="input-address"/>
+                            <form:input path="address" class="form-control" type="text" name="address" value="<%=userData.getAddress()%>" id="input-address" maxlength="128"/>
+                            <form:errors path="address"/>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="input-description">Опис</label>
-                            <form:input path="description" class="form-control" type="text" name="description" value="<%=userData.getDescription()%>" id="input-description"/>
+                            <form:input path="description" class="form-control" type="text" name="description" value="<%=userData.getDescription()%>" id="input-description" maxlength="512"/>
+                            <form:errors path="description"/>
                         </div>
 
                         <button class="btn btn-success w-100 mb-3" type="submit">Оновити дані</button>

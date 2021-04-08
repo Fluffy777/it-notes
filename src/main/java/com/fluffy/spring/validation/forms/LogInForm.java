@@ -1,6 +1,9 @@
 package com.fluffy.spring.validation.forms;
 
-public class LogInForm {
+import com.fluffy.spring.domain.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+public class LogInForm extends UserForm {
     private String email;
     private String password;
 
@@ -20,5 +23,11 @@ public class LogInForm {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    protected void translateData(User newUser, PasswordEncoder passwordEncoder) {
+        newUser.setEmail(email);
+        newUser.setPassword(passwordEncoder.encode(password));
     }
 }

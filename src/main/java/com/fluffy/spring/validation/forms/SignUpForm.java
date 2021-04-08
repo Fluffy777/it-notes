@@ -1,5 +1,12 @@
 package com.fluffy.spring.validation.forms;
 
+import com.fluffy.spring.domain.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 public class SignUpForm extends LogInForm {
     private String firstName;
     private String lastName;
@@ -48,5 +55,19 @@ public class SignUpForm extends LogInForm {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    @Override
+    protected void translateData(User newUser, PasswordEncoder passwordEncoder) {
+        newUser.setFirstName(firstName);
+        newUser.setLastName(lastName);
+        newUser.setGender(gender.equals("M") ? User.Gender.MALE : User.Gender.FEMALE);
+        super.translateData(newUser, passwordEncoder);
+
+        if (bday != null && !bday.isEmpty()) {
+            newUser.setBday(Date.valueOf(LocalDate.parse(bday, DateTimeFormatter.ofPattern("dd/MM/yyyy"))));
+        }
+
+        newUser.setAddress(address);
     }
 }

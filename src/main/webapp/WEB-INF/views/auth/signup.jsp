@@ -60,7 +60,7 @@
 
                     <div class="mb-3">
                         <label class="form-label" for="input-password">Пароль</label>
-                        <form:input path="password" class="form-control" type="password" name="password" id="input-password" placeholder="8+ символів (букви обох регістрів, цифри)" required="required"/>
+                        <form:input path="password" class="form-control" type="password" name="password" id="input-password" placeholder="8+ символів (букви обох регістрів, цифри)" maxlength="60" required="required"/>
                         <form:errors path="password"/>
                     </div>
 

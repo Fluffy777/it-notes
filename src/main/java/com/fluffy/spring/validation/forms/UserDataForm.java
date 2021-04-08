@@ -1,5 +1,8 @@
 package com.fluffy.spring.validation.forms;
 
+import com.fluffy.spring.domain.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 public class UserDataForm extends SignUpForm {
     private String description;
     private String newPassword;
@@ -30,5 +33,11 @@ public class UserDataForm extends SignUpForm {
 
     public void setNewPasswordAgain(String newPasswordAgain) {
         this.newPasswordAgain = newPasswordAgain;
+    }
+
+    @Override
+    protected void translateData(User newUser, PasswordEncoder passwordEncoder) {
+        super.translateData(newUser, passwordEncoder);
+        newUser.setDescription(description);
     }
 }
