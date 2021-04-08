@@ -24,7 +24,7 @@ public abstract class AbstractFormValidator implements Validator {
         public String toString() {
             switch (this) {
                 case NAME:
-                    return "^[A-ZА-Я][a-zа-яA-ZА-Я-]{1,28}[a-zа-яA-ZА-Я]$";
+                    return "^[A-ZА-Я][a-zа-яA-ZА-Я-]{1,48}[a-zа-яA-ZА-Я]$";
                 case PASSWORD:
                     return "(?=^.{8,}$)((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$";
                 case EMAIL:
@@ -33,9 +33,9 @@ public abstract class AbstractFormValidator implements Validator {
                     return "^(?:(?:(?:0[1-9]|1\\d|2[0-8])\\/(?:0[1-9]|1[0-2])|(?:29|30)\\/(?:0[13-9]|1[0-2])|31\\/(?:0[13578]|1[02]))" +
                             "\\/[1-9]\\d{3}|29\\/02(?:\\/[1-9]\\d(?:0[48]|[2468][048]|[13579][26])|(?:[2468][048]|[13579][26])00))$";
                 case GENDER:
-                    return "^Y|N$";
+                    return "^(male)|(female)$";
                 case ENABLEABILITY:
-                    return "^M|F$";
+                    return "^(enable)|(disable)$";
                 case ANY:
                 default:
                     return "^.*$";

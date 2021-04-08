@@ -19,6 +19,8 @@ public final class ConversionUtils {
     }
 
     public static User convert(SignUpForm signUpForm) {
+        System.out.println("convert");
+
         User user = new User();
         user.setFirstName(signUpForm.getFirstName());
         user.setLastName(signUpForm.getLastName());
@@ -26,8 +28,10 @@ public final class ConversionUtils {
         user.setEmail(signUpForm.getEmail());
         user.setPassword(signUpForm.getPassword());
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
-        user.setBday(Date.valueOf(LocalDate.parse(signUpForm.getBday(), formatter)));
+        String bday = signUpForm.getBday();
+        if (bday != null && !bday.isEmpty()) {
+            user.setBday(Date.valueOf(LocalDate.parse(bday, DateTimeFormatter.ofPattern("dd/MM/yyyy"))));
+        }
 
         user.setAddress(signUpForm.getAddress());
         return user;

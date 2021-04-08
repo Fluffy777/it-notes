@@ -27,11 +27,13 @@
                     <div class="row mb-3">
                         <div class="col">
                             <label class="form-label" for="input-first-name">Ім'я</label>
-                            <form:input path="firstName" class="form-control" type="text" name="first-name" id="input-first-name" required="required"/>
+                            <form:input path="firstName" class="form-control" type="text" name="first-name" id="input-first-name" placeholder="John" maxlength="50" required="required"/>
+                            <form:errors path="firstName"/>
                         </div>
                         <div class="col">
                             <label class="form-label" for="input-last-name">Прізвище</label>
-                            <form:input path="lastName" class="form-control" type="text" name="last-name" id="input-last-name" required="required"/>
+                            <form:input path="lastName" class="form-control" type="text" name="last-name" id="input-last-name" placeholder="Doe" maxlength="50" required="required"/>
+                            <form:errors path="lastName"/>
                         </div>
                     </div>
 
@@ -46,27 +48,32 @@
                                 <form:radiobutton path="gender" class="form-check-input" name="gender" id="female" value="female" required="required"/>
                                 <label class="form-check-label" for="female">Жінка</label>
                             </div>
+                            <form:errors path="gender"/>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label" for="input-email">Електронна пошта</label>
-                        <form:input path="email" class="form-control" type="text" name="email" id="input-email" required="required"/>
+                        <form:input path="email" class="form-control" type="text" name="email" id="input-email" placeholder="john.doe@example.com" maxlength="320" required="required"/>
+                        <form:errors path="email"/>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label" for="input-password">Пароль</label>
-                        <form:input path="password" class="form-control" type="password" name="password" id="input-password" required="required"/>
+                        <form:input path="password" class="form-control" type="password" name="password" id="input-password" placeholder="8+ символів (букви обох регістрів, цифри)" required="required"/>
+                        <form:errors path="password"/>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label" for="input-bday">Дата народження</label>
-                        <form:input path="bday" class="form-control" type="text" name="bday" id="input-bday" placeholder="dd/mm/yyyy"/>
+                        <form:input path="bday" class="form-control" type="text" name="bday" id="input-bday" placeholder="dd/mm/yyyy" maxlength="10"/>
+                        <form:errors path="bday"/>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label" for="input-address">Адреса</label>
-                        <form:input path="address" class="form-control" type="text" name="address" id="input-address"/>
+                        <form:input path="address" class="form-control" type="text" name="address" id="input-address" placeholder="Місто та країна"/>
+                        <form:errors path="address"/>
                     </div>
                     <button class="btn btn-success w-100 mb-3" type="submit">Зареєструватися</button>
 
@@ -82,5 +89,7 @@
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+
+    <script src="<c:url value="/resources/static/js/signup-form-helper.js"/>"></script>
 </body>
 </html>

@@ -10,9 +10,9 @@
         <a class="header__title col-auto align-self-center" href="<c:url value="/"/>">
             Нотатки програміста
         </a>
-        <div class="header__nav-item col">
+        <a class="header__nav-item col" data-bs-toggle="modal" data-bs-target="#modal">
             <i class="header__nav-item-content bi bi-info-circle float-end"></i>
-        </div>
+        </a>
         <div class="btn-group col-auto">
             <div class="header__nav-item col-auto" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="header__nav-item-content bi bi-person-circle float-end"></i>
@@ -32,3 +32,5 @@
         </div>
     </nav>
 </header>
+
+<jsp:include page="/WEB-INF/components/about-modal.jsp"/>

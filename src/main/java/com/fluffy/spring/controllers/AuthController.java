@@ -14,11 +14,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.Validator;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.validation.Valid;
 
 @Controller
 public class AuthController {
@@ -34,9 +37,9 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @InitBinder
-    protected void signUpFormInitBinder() {
-
+    @InitBinder("signUpForm")
+    protected void signUpFormInitBinder(WebDataBinder binder) {
+        binder.setValidator(signUpFormValidator);
     }
 
     @GetMapping("/login")
@@ -56,9 +59,11 @@ public class AuthController {
 
     @PostMapping("/signup")
     public String signUp(
-            @Validated @ModelAttribute(name = "signUpForm") SignUpForm signUpForm,
+            @Valid @ModelAttribute(name = "signUpForm") SignUpForm signUpForm,
             BindingResult result) {
         if (result.hasErrors()) {
+            System.out.println("has errors!");
+            System.out.println(result.getFieldErrors());
             return "/auth/signup";
         } else if (userService.findByEmail(signUpForm.getEmail()) != null) {
             result.addError(new FieldError("signUpForm",

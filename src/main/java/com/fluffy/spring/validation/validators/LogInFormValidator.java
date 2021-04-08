@@ -22,11 +22,11 @@ public class LogInFormValidator extends AbstractFormValidator {
         LogInForm logInForm = (LogInForm) o;
 
         // перевірка на непорожність
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "application.validation.log-in-form.error-code.email-empty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "application.validation.log-in-form.error-code.password-empty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "logInForm.email.empty");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "logInForm.password.empty");
 
         // перевірка на коректність
-        validate(InputType.EMAIL, logInForm.getEmail(), errors, "email", "application.validation.log-in-form.error-code.email-invalid");
-        validate(InputType.PASSWORD, logInForm.getEmail(), errors, "password", "application.validation.log-in-form.error-code.password-invalid");
+        validate(InputType.EMAIL, logInForm.getEmail(), errors, "email", "logInForm.email.invalid");
+        validate(InputType.PASSWORD, logInForm.getPassword(), errors, "password", "logInForm.password.invalid");
     }
 }
