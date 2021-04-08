@@ -8,10 +8,8 @@ import org.springframework.validation.ValidationUtils;
 
 @Service
 public class LogInFormValidator extends AbstractFormValidator {
-    private final Environment env;
-
     public LogInFormValidator(Environment env) {
-        this.env = env;
+        super(env);
     }
 
     @Override

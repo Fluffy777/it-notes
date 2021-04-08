@@ -7,11 +7,9 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
 @Service
-public class SignUpFormValidator extends AbstractFormValidator {
-    private final Environment env;
-
+public class SignUpFormValidator extends LogInFormValidator {
     public SignUpFormValidator(Environment env) {
-        this.env = env;
+        super(env);
     }
 
     @Override
@@ -27,15 +25,15 @@ public class SignUpFormValidator extends AbstractFormValidator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "application.validation.sign-up-form.error-code.first-name-empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "application.validation.sign-up-form.error-code.last-name-empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "gender", "application.validation.sign-up-form.error-code.gender-empty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "application.validation.sign-up-form.error-code.email-empty");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "application.validation.sign-up-form.error-code.password-empty");
+        //ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "application.validation.sign-up-form.error-code.email-empty");
+        //ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "application.validation.sign-up-form.error-code.password-empty");
 
         // перевірка на коректність
         validate(InputType.NAME, signUpForm.getFirstName(), errors, "firstName", "application.validation.sign-up-form.error-code.first-name-invalid");
         validate(InputType.NAME, signUpForm.getLastName(), errors, "lastName", "application.validation.sign-up-form.error-code.last-name-invalid");
         validate(InputType.GENDER, signUpForm.getGender(), errors, "gender", "application.validation.sign-up-form.error-code.gender-invalid");
-        validate(InputType.EMAIL, signUpForm.getEmail(), errors, "email", "application.validation.sign-up-form.error-code.email-invalid");
-        validate(InputType.PASSWORD, signUpForm.getEmail(), errors, "password", "application.validation.sign-up-form.error-code.password-invalid");
+        //validate(InputType.EMAIL, signUpForm.getEmail(), errors, "email", "application.validation.sign-up-form.error-code.email-invalid");
+        //validate(InputType.PASSWORD, signUpForm.getEmail(), errors, "password", "application.validation.sign-up-form.error-code.password-invalid");
         validate(InputType.DATE, signUpForm.getBday(), errors, "bday", "application.validation.sign-up-form.error-code.bday-invalid");
 
         // перевірка на довжину опціональних рядків

@@ -5,7 +5,7 @@
 <header class="header mb-4">
     <nav class="header__nav navbar row p-2">
         <a class="header__logo-col col-auto" href="<c:url value="/"/>">
-            <img class="header__logo float-start" src="<c:url value="/resources/static/img/common/logo.png"/>" alt="Логотип">
+            <img class="header__logo" src="<c:url value="/resources/static/img/common/logo.png"/>" alt="Логотип">
         </a>
         <a class="header__title col-auto align-self-center" href="<c:url value="/"/>">
             Нотатки програміста

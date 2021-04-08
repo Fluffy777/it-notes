@@ -1,9 +1,16 @@
 package com.fluffy.spring.validation.validators;
 
+import org.springframework.core.env.Environment;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 public abstract class AbstractFormValidator implements Validator {
+    protected final Environment env;
+
+    public AbstractFormValidator(Environment env) {
+        this.env = env;
+    }
+
     public enum InputType {
         NAME,
         PASSWORD,

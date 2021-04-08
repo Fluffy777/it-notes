@@ -1,16 +1,13 @@
 package com.fluffy.spring.validation.forms;
 
-public class SignUpForm {
+public class SignUpForm extends LogInForm {
     private String firstName;
     private String lastName;
     private String gender;
-    private String email;
-    private String password;
     private String bday;
     private String address;
 
     public SignUpForm() {
-
     }
 
     public String getFirstName() {
@@ -35,22 +32,6 @@ public class SignUpForm {
 
     public void setGender(String gender) {
         this.gender = gender;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getBday() {

@@ -12,20 +12,4 @@ public class PrimaryController {
         modelAndView.setViewName("index");
         return modelAndView;
     }
-    /*
-    @RequestMapping(path = "/")
-    public ModelAndView index() {
-        ModelAndView modelAndView = new ModelAndView("index");
-        modelAndView.setViewName("index");
-        return modelAndView;
-    }
-
-    @RequestMapping(path = "/index")
-    public ModelAndView other() {
-        ModelAndView modelAndView = new ModelAndView("index");
-        modelAndView.setViewName("index");
-        return modelAndView;
-    }
-
-     */
 }

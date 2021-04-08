@@ -1,10 +1,13 @@
 package com.fluffy.spring.controllers;
 
+import com.fluffy.spring.domain.User;
 import com.fluffy.spring.services.UserService;
 import com.fluffy.spring.util.ConversionUtils;
 import com.fluffy.spring.validation.forms.LogInForm;
 import com.fluffy.spring.validation.forms.SignUpForm;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -66,5 +69,16 @@ public class AuthController {
 
         userService.create(ConversionUtils.convert(signUpForm));
         return "redirect:/login";
+    }
+
+    public static String getCurrentUsername() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        } else if (principal instanceof User) {
+            return ((User) principal).getEmail();
+        } else {
+            return principal.toString();
+        }
     }
 }

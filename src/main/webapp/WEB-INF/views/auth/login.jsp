@@ -22,7 +22,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-auto">
-                <form:form modelAttribute="logInForm" class="border border-primary p-4 rounded" action="${pageContext.request.contextPath}/login/processing" method="POST">
+                <form:form modelAttribute="logInForm" class="border border-primary p-4 rounded" action="${pageContext.request.contextPath}/login/processing" method="post">
                     <h1>Вхід до облікового запису</h1>
                     <c:if test='${param.get("error") == true}'>
                         <div class="text-danger mb-5">
