@@ -1,11 +1,11 @@
 package com.fluffy.spring.controllers;
 
 import com.fluffy.spring.domain.User;
-import com.fluffy.spring.services.IconStorageService;
 import com.fluffy.spring.services.UserService;
 import com.fluffy.spring.util.FileUploadUtil;
 import com.fluffy.spring.validation.forms.UserDataForm;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,23 +13,24 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
 @Controller
 public class UserController {
@@ -38,20 +39,20 @@ public class UserController {
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final ServletContext servletContext;
-    private final IconStorageService iconStorageService;
+    private final Environment env;
 
     public UserController(@Qualifier("userDataFormValidator") Validator userDataFormValidator,
                           UserService userService,
                           UserDetailsService userDetailsService,
                           PasswordEncoder passwordEncoder,
                           ServletContext servletContext,
-                          IconStorageService iconStorageService) {
+                          Environment env) {
         this.userDataFormValidator = userDataFormValidator;
         this.userService = userService;
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
         this.servletContext = servletContext;
-        this.iconStorageService = iconStorageService;
+        this.env = env;
     }
 
     @InitBinder("userDataForm")
@@ -70,9 +71,8 @@ public class UserController {
     @PostMapping("/profile")
     public ModelAndView profileUpdate(
             @Valid @ModelAttribute(name = "userDataForm") UserDataForm userDataForm,
-            BindingResult bindingResult,
-            @RequestParam("icon") MultipartFile multipartFile
-            ) {
+            BindingResult bindingResult
+            ) throws IOException {
         // оновлені дані про поточного користувача (без userId, rday)
         User currentUser = userDataForm.buildUser(passwordEncoder);
 
@@ -86,18 +86,41 @@ public class UserController {
         currentUser.setEnabled(user.isEnabled());
         currentUser.setRday(user.getRday());
 
-
-
-        iconStorageService.store(multipartFile);
-        currentUser.setIcon(multipartFile.getOriginalFilename());
-
-        System.out.println(multipartFile.getOriginalFilename());
-        System.out.println(currentUser.getIcon());
+        // щоб уникнути зміну зображення, якщо та не відбулася
+        currentUser.setIcon(user.getIcon());
 
         if (!bindingResult.hasErrors()) {
+            // видалити попередній файл (и) ...
+
             // файл завантажується лише тоді, коли всі інші дані не містять
             // помилок - імітується "транзакція", її атомарність
-            
+
+
+
+            /*
+            MultipartFile multipartFile = userDataForm.getIcon();
+            String fileName = multipartFile.getOriginalFilename();
+
+            String uploadPath = servletContext.getRealPath(env.getProperty("application.resources.upload-path")) + File.separator + currentUser.getId();
+            String visibleUploadPath = File.separator + fileName
+
+            Path path = Paths.get(uploadPath);
+            if (!Files.exists(path)) {
+                Files.createDirectories(path);
+            }
+            //uploadPath += File.separator + multipartFile.getOriginalFilename();
+            FileCopyUtils.copy(multipartFile.getBytes(), new File(uploadPath));
+            currentUser.setIcon(uploadPath);
+             */
+
+            MultipartFile multipartFile = userDataForm.getIcon();
+            String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+            currentUser.setIcon(fileName);
+
+            String uploadDir = "icons/" + currentUser.getId();
+            FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
+
+
 
             // під час проходження валідації помилок не виникало - треба
             // оновити дані про поточного користувача
@@ -123,8 +146,6 @@ public class UserController {
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(email, password, userDetails.getAuthorities()));
         }
-
-        System.out.println(bindingResult.getFieldErrors());
 
         return new ModelAndView("profile", "user", currentUser);
     }

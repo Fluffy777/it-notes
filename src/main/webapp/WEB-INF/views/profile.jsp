@@ -39,7 +39,7 @@
             <div class="col-auto">
                 <form:form modelAttribute="userDataForm" class="border border-primary p-4 rounded" action="${pageContext.request.contextPath}/profile" method="post" enctype="multipart/form-data">
                     <div class="col-auto mb-3">
-                        <img class="profile__logo mb-2" id="thumbnail" src="<%=userData.getIcon()%>" alt="Фото">
+                        <img class="profile__logo mb-2" id="thumbnail" src="<%="icons/" + userData.getId() + "/" + userData.getIcon()%>" alt="Фото">
                         <form:input path="icon" class="form-control" type="file" name="icon" id="input-icon" accept="image/png, image/jpeg"/>
                         <form:errors path="icon"/>
                     </div>

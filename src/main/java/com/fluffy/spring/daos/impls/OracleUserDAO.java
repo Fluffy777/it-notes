@@ -44,7 +44,7 @@ public class OracleUserDAO implements UserDAO {
         user.setBday(resultSet.getDate("bday"));
         user.setDescription(resultSet.getString("description"));
         user.setAddress(resultSet.getString("address"));
-        //user.setIcon(resultSet.getBlob("icon").getBytes(0, ...));
+        user.setIcon(resultSet.getString("icon"));
         return user;
     }
 
@@ -159,8 +159,7 @@ public class OracleUserDAO implements UserDAO {
                 statement.setDate(++seq, user.getBday());
                 statement.setString(++seq, user.getDescription());
                 statement.setString(++seq, user.getAddress());
-                statement.setNull(++seq, Types.BLOB);
-                //statement.setBlob(++seq, user.getIcon());
+                statement.setString(++seq, user.getIcon());
                 statement.setInt(++seq, primaryKey);
 
                 return statement.executeUpdate() != 0;

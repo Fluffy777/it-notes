@@ -2,7 +2,6 @@ package com.fluffy.spring.validation.validators;
 
 import com.fluffy.spring.controllers.AuthController;
 import com.fluffy.spring.domain.User;
-import com.fluffy.spring.services.IconStorageService;
 import com.fluffy.spring.services.UserService;
 import com.fluffy.spring.validation.forms.UserDataForm;
 import org.springframework.core.env.Environment;
@@ -15,12 +14,10 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class UserDataFormValidator extends SignUpFormValidator {
     private final PasswordEncoder passwordEncoder;
-    private final IconStorageService iconStorageService;
 
-    public UserDataFormValidator(UserService userService, PasswordEncoder passwordEncoder, IconStorageService iconStorageService, Environment env) {
+    public UserDataFormValidator(UserService userService, PasswordEncoder passwordEncoder, Environment env) {
         super(userService, env);
         this.passwordEncoder = passwordEncoder;
-        this.iconStorageService = iconStorageService;
     }
 
     @Override
@@ -41,14 +38,11 @@ public class UserDataFormValidator extends SignUpFormValidator {
 
         MultipartFile file = userDataForm.getIcon();
         if (file != null) {
-            // якщо користувач намагається передати зображення
             if (file.isEmpty()) {
                 errors.rejectValue("icon", "userDataForm.icon.empty");
             }
+            // перевірка типу ...
 
-            if (!iconStorageService.isImage(file)) {
-                errors.rejectValue("icon", "userDataForm.icon.typeMismatch");
-            }
         }
 
         // перевірка на коректність

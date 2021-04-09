@@ -1,6 +1,5 @@
 package com.fluffy.spring.configurations.app;
 
-import com.fluffy.spring.services.IconStorageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
@@ -10,7 +9,6 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -19,9 +17,9 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.servlet.ServletContext;
 import javax.sql.DataSource;
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Configuration
 @EnableWebMvc
@@ -61,6 +59,16 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
         registry
                 .addResourceHandler(env.getProperty("application.static-path-pattern"))
                 .addResourceLocations(env.getProperty("application.resources.static-locations"));
+        exposeDirectory("icons", registry);
+    }
+
+    private void exposeDirectory(String dirName, ResourceHandlerRegistry registry) {
+        Path uploadDir = Paths.get(dirName);
+        String uploadPath = uploadDir.toFile().getAbsolutePath();
+
+        if (dirName.startsWith("../")) dirName = dirName.replace("../", "");
+
+        registry.addResourceHandler("/" + dirName + "/**").addResourceLocations("file:/"+ uploadPath + "/");
     }
 
     @Bean
@@ -104,6 +112,7 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
     }
+
 
     @Bean(name = "multipartResolver")
     public CommonsMultipartResolver multipartResolver() {
