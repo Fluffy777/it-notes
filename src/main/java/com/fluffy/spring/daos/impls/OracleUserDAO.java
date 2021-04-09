@@ -4,8 +4,8 @@ import com.fluffy.spring.daos.ConnectionDAO;
 import com.fluffy.spring.daos.UserDAO;
 import com.fluffy.spring.daos.UserRoleDTO;
 import com.fluffy.spring.domain.User;
-import com.fluffy.spring.exceptions.DBConnectionException;
-import com.fluffy.spring.exceptions.PersistException;
+import com.fluffy.spring.daos.exceptions.DBConnectionException;
+import com.fluffy.spring.daos.exceptions.PersistException;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -134,9 +134,6 @@ public class OracleUserDAO implements UserDAO {
                 statement.setString(++seq, user.getAddress());
                 statement.setNull(++seq, Types.BLOB);
                 //statement.setBlob(++seq, user.getIcon());
-
-                System.out.println(user.isEnabled() + " " + user.getFirstName() + " " + user.getLastName() + " " + (user.getGender().equals(User.Gender.MALE) ? "M" : "F") + " " +
-                        user.getEmail() + " " + user.getPassword() + " " + user.getRday() + " " + user.getBday() + " " + user.getDescription() + " " + user.getAddress() + " " + "null");
 
                 return statement.executeUpdate() != 0;
             } catch (SQLException e) {

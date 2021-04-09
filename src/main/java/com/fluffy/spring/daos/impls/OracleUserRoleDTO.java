@@ -4,8 +4,8 @@ import com.fluffy.spring.daos.ConnectionDAO;
 import com.fluffy.spring.daos.RoleDAO;
 import com.fluffy.spring.daos.UserRoleDTO;
 import com.fluffy.spring.domain.Role;
-import com.fluffy.spring.exceptions.DBConnectionException;
-import com.fluffy.spring.exceptions.PersistException;
+import com.fluffy.spring.daos.exceptions.DBConnectionException;
+import com.fluffy.spring.daos.exceptions.PersistException;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;

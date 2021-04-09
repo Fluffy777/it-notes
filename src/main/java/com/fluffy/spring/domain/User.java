@@ -17,7 +17,7 @@ public class User {
     private Date bday;
     private String description;
     private String address;
-    private byte[] icon;
+    private String icon;
 
     public enum Gender {
         MALE,
@@ -120,11 +120,11 @@ public class User {
         this.address = address;
     }
 
-    public byte[] getIcon() {
+    public String getIcon() {
         return icon;
     }
 
-    public void setIcon(byte[] icon) {
+    public void setIcon(String icon) {
         this.icon = icon;
     }
 
@@ -142,7 +142,7 @@ public class User {
                 ", bday=" + bday +
                 ", description='" + description + '\'' +
                 ", address='" + address + '\'' +
-                ", icon=" + Arrays.toString(icon) +
+                ", icon=" + icon +
                 '}';
     }
 }

@@ -61,7 +61,7 @@ public class SignUpForm extends LogInForm {
     protected void translateData(User newUser, PasswordEncoder passwordEncoder) {
         newUser.setFirstName(firstName);
         newUser.setLastName(lastName);
-        newUser.setGender(gender.equals("M") ? User.Gender.MALE : User.Gender.FEMALE);
+        newUser.setGender(gender.equals("male") ? User.Gender.MALE : User.Gender.FEMALE);
         super.translateData(newUser, passwordEncoder);
 
         if (bday != null && !bday.isEmpty()) {

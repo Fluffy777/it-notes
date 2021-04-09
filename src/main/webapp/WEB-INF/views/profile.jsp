@@ -1,6 +1,5 @@
 <%@ page import="com.fluffy.spring.domain.User" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page import="java.util.Date" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -38,9 +37,11 @@
     <div class="container">
         <div class="profile row">
             <div class="col-auto">
-                <form:form modelAttribute="userDataForm" class="border border-primary p-4 rounded" action="${pageContext.request.contextPath}/profile" method="post">
-                    <div class="col-auto">
-                        <img class="profile__logo" src="" alt="Фото">
+                <form:form modelAttribute="userDataForm" class="border border-primary p-4 rounded" action="${pageContext.request.contextPath}/profile" method="post" enctype="multipart/form-data">
+                    <div class="col-auto mb-3">
+                        <img class="profile__logo mb-2" id="thumbnail" src="<%=userData.getIcon()%>" alt="Фото">
+                        <form:input path="icon" class="form-control" type="file" name="icon" id="input-icon" accept="image/png, image/jpeg"/>
+                        <form:errors path="icon"/>
                     </div>
                     <div class="col-auto">
                         <div class="row mb-3">
@@ -139,5 +140,24 @@
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script>
+        $('#input-icon').change(function() {
+            showImageThumbnail(this);
+        });
+
+        function showImageThumbnail(fileInput) {
+           file = fileInput.files[0];
+           reader = new FileReader();
+           reader.onload = function(e) {
+               $('#thumbnail').attr('src', e.target.result);
+           }
+
+           reader.readAsDataURL(file);
+        }
+    </script>
 </body>
 </html>

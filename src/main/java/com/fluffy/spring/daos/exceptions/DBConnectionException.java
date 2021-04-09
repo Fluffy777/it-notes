@@ -1,4 +1,4 @@
-package com.fluffy.spring.exceptions;
+package com.fluffy.spring.daos.exceptions;
 
 public class DBConnectionException extends RuntimeException {
     public DBConnectionException() {

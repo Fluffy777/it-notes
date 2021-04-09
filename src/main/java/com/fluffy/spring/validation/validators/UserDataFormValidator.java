@@ -2,6 +2,7 @@ package com.fluffy.spring.validation.validators;
 
 import com.fluffy.spring.controllers.AuthController;
 import com.fluffy.spring.domain.User;
+import com.fluffy.spring.services.IconStorageService;
 import com.fluffy.spring.services.UserService;
 import com.fluffy.spring.validation.forms.UserDataForm;
 import org.springframework.core.env.Environment;
@@ -9,14 +10,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class UserDataFormValidator extends SignUpFormValidator {
     private final PasswordEncoder passwordEncoder;
+    private final IconStorageService iconStorageService;
 
-    public UserDataFormValidator(UserService userService, PasswordEncoder passwordEncoder, Environment env) {
+    public UserDataFormValidator(UserService userService, PasswordEncoder passwordEncoder, IconStorageService iconStorageService, Environment env) {
         super(userService, env);
         this.passwordEncoder = passwordEncoder;
+        this.iconStorageService = iconStorageService;
     }
 
     @Override
@@ -34,6 +38,18 @@ public class UserDataFormValidator extends SignUpFormValidator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "signUpForm.lastName.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "gender", "signUpForm.gender.empty");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "logInForm.email.empty");
+
+        MultipartFile file = userDataForm.getIcon();
+        if (file != null) {
+            // якщо користувач намагається передати зображення
+            if (file.isEmpty()) {
+                errors.rejectValue("icon", "userDataForm.icon.empty");
+            }
+
+            if (!iconStorageService.isImage(file)) {
+                errors.rejectValue("icon", "userDataForm.icon.typeMismatch");
+            }
+        }
 
         // перевірка на коректність
         validate(InputType.NAME, userDataForm.getFirstName(), errors, "firstName", "signUpForm.firstName.invalid");
@@ -62,14 +78,14 @@ public class UserDataFormValidator extends SignUpFormValidator {
             if (!passwordEncoder.matches(password, currentUser.getPassword())) {
                 // паролі не співпали, а мали - користувач повинен підтвердити
                 // зміни введенням старого пароля
-                errors.rejectValue("email", "userDataForm.password.bad");
+                errors.rejectValue("password", "userDataForm.password.bad");
             } else {
                 // паролі співпали - користувач підтверджує свої дії
                 if (newPassword != null && !newPassword.isEmpty()) {
                     // користувач вказав новий пароль, щоб змінити попередній,
                     if (!newPassword.equals(newPasswordAgain)) {
                         // користувач не зміг підтвердити новий пароль
-                        errors.rejectValue("email", "userDataForm.newPasswordAgain.bad");
+                        errors.rejectValue("newPasswordAgain", "userDataForm.newPasswordAgain.bad");
                     }
                 }
             }
