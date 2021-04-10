@@ -1,9 +1,11 @@
-package com.fluffy.spring.validation.forms;
+package com.fluffy.spring.validation.forms.users;
 
 import com.fluffy.spring.domain.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+@Component
 public class UserDataForm extends SignUpForm {
     private String description;
     private String newPassword;

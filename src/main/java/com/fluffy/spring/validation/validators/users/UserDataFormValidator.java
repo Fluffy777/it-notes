@@ -1,9 +1,9 @@
-package com.fluffy.spring.validation.validators;
+package com.fluffy.spring.validation.validators.users;
 
 import com.fluffy.spring.controllers.AuthController;
 import com.fluffy.spring.domain.User;
 import com.fluffy.spring.services.UserService;
-import com.fluffy.spring.validation.forms.UserDataForm;
+import com.fluffy.spring.validation.forms.users.UserDataForm;
 import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,14 +41,14 @@ public class UserDataFormValidator extends SignUpFormValidator {
     }
 
     @Override
-    public boolean supports(Class<?> aClass) {
-        return aClass.equals(UserDataForm.class);
+    public boolean supports(Class<?> clazz) {
+        return clazz.equals(UserDataForm.class);
     }
 
     @Override
-    public void validate(Object o, Errors errors) {
+    public void validate(Object target, Errors errors) {
         // повне перевизначення, оскільки не все вказувати є потрібним
-        UserDataForm userDataForm = (UserDataForm) o;
+        UserDataForm userDataForm = (UserDataForm) target;
 
         // перевірка на непорожність
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "signUpForm.firstName.empty");

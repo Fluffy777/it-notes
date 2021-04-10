@@ -1,4 +1,4 @@
-package com.fluffy.spring.validation.validators;
+package com.fluffy.spring.validation.validators.users;
 
 import org.springframework.core.env.Environment;
 import org.springframework.validation.Errors;

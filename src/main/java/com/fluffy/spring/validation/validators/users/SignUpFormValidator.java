@@ -1,7 +1,7 @@
-package com.fluffy.spring.validation.validators;
+package com.fluffy.spring.validation.validators.users;
 
 import com.fluffy.spring.services.UserService;
-import com.fluffy.spring.validation.forms.SignUpForm;
+import com.fluffy.spring.validation.forms.users.SignUpForm;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
@@ -17,14 +17,14 @@ public class SignUpFormValidator extends LogInFormValidator {
     }
 
     @Override
-    public boolean supports(Class<?> aClass) {
-        return aClass.equals(SignUpForm.class);
+    public boolean supports(Class<?> clazz) {
+        return clazz.equals(SignUpForm.class);
     }
 
     @Override
-    public void validate(Object o, Errors errors) {
-        super.validate(o, errors);
-        SignUpForm signUpForm = (SignUpForm) o;
+    public void validate(Object target, Errors errors) {
+        super.validate(target, errors);
+        SignUpForm signUpForm = (SignUpForm) target;
 
         // перевірка на непорожність
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "signUpForm.firstName.empty");

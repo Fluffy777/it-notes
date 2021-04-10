@@ -9,6 +9,7 @@ public class Article {
     private String name;
     private String content;
     private Date modificationDate;
+    private int views;
 
     public int getId() {
         return id;
@@ -58,6 +59,14 @@ public class Article {
         this.modificationDate = modificationDate;
     }
 
+    public int getViews() {
+        return views;
+    }
+
+    public void setViews(int views) {
+        this.views = views;
+    }
+
     @Override
     public String toString() {
         return "Article{" +
@@ -67,6 +76,7 @@ public class Article {
                 ", name='" + name + '\'' +
                 ", content='" + content + '\'' +
                 ", modificationDate=" + modificationDate +
+                ", views=" + views +
                 '}';
     }
 }

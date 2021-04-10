@@ -1,4 +1,4 @@
-package com.fluffy.spring.validation.forms;
+package com.fluffy.spring.validation.forms.users;
 
 import com.fluffy.spring.domain.User;
 import org.springframework.security.crypto.password.PasswordEncoder;

@@ -21,7 +21,7 @@ import java.util.List;
 public class OracleUserDAO implements UserDAO {
     private static final String QUERY_GET_ALL = "SELECT * FROM users";
     private static final String QUERY_GET = QUERY_GET_ALL + " WHERE user_id = ?";
-    private static final String QUERY_GET_BY_EMAIL = "SELECT * FROM users WHERE email = ?";
+    private static final String QUERY_GET_BY_EMAIL =  QUERY_GET_ALL + " WHERE email = ?";
     private static final String QUERY_INSERT = "INSERT INTO users (enabled, first_name, last_name, gender, email, password, rday, bday, description, address, icon) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String QUERY_UPDATE = "UPDATE users SET enabled = ?, first_name = ?, last_name = ?, gender = ?, email = ?, password = ?, rday = ?, bday = ?, description = ?, address = ?, icon = ? WHERE user_id = ?";
     private static final String QUERY_DELETE = "DELETE FROM users WHERE user_id = ?";
@@ -132,8 +132,7 @@ public class OracleUserDAO implements UserDAO {
                 statement.setDate(++seq, user.getBday());
                 statement.setString(++seq, user.getDescription());
                 statement.setString(++seq, user.getAddress());
-                statement.setNull(++seq, Types.BLOB);
-                //statement.setBlob(++seq, user.getIcon());
+                statement.setString(++seq, user.getIcon());
 
                 return statement.executeUpdate() != 0;
             } catch (SQLException e) {

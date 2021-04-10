@@ -1,6 +1,6 @@
-package com.fluffy.spring.validation.validators;
+package com.fluffy.spring.validation.validators.users;
 
-import com.fluffy.spring.validation.forms.LogInForm;
+import com.fluffy.spring.validation.forms.users.LogInForm;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
@@ -13,13 +13,13 @@ public class LogInFormValidator extends AbstractFormValidator {
     }
 
     @Override
-    public boolean supports(Class<?> aClass) {
-        return aClass.equals(LogInForm.class);
+    public boolean supports(Class<?> clazz) {
+        return clazz.equals(LogInForm.class);
     }
 
     @Override
-    public void validate(Object o, Errors errors) {
-        LogInForm logInForm = (LogInForm) o;
+    public void validate(Object target, Errors errors) {
+        LogInForm logInForm = (LogInForm) target;
 
         // перевірка на непорожність
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "logInForm.email.empty");

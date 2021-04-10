@@ -1,12 +1,14 @@
-package com.fluffy.spring.validation.forms;
+package com.fluffy.spring.validation.forms.users;
 
 import com.fluffy.spring.domain.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+@Component
 public class SignUpForm extends LogInForm {
     private String firstName;
     private String lastName;

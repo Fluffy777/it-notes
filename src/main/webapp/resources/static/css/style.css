@@ -126,7 +126,7 @@ body {
   height: 150px;
 }
 
-input+span {
+input + span, textarea + span {
   font-size: 0.75em;
   color: #dc3545;
 }

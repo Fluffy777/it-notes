@@ -1,8 +1,10 @@
-package com.fluffy.spring.validation.forms;
+package com.fluffy.spring.validation.forms.users;
 
 import com.fluffy.spring.domain.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
+@Component
 public class LogInForm extends UserForm {
     private String email;
     private String password;

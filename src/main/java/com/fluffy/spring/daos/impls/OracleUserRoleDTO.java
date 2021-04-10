@@ -38,7 +38,7 @@ public class OracleUserRoleDTO implements UserRoleDTO {
                 }
                 return roles;
             } catch (SQLException e) {
-                throw new PersistException("Не вдалося виконати запит на отримання даних про всі ролі користувача ", e);
+                throw new PersistException("Не вдалося виконати запит на отримання даних про всі ролі користувача, у якого user_id = " + userId, e);
             }
         } catch (SQLException e) {
             throw new DBConnectionException("Не вдалося отримати з'єднання із базою даних", e);

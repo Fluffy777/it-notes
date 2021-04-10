@@ -1,7 +1,7 @@
 package com.fluffy.spring.domain;
 
 public class Category {
-    private Integer id;
+    private int id;
     private String name;
 
     public int getId() {
