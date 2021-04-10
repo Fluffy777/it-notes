@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 
 <html lang="uk">
     <meta charset="UTF-8">
@@ -22,42 +23,55 @@
     <div class="container-fluid">
         <div class="row mb-4">
             <div class="col-8 px-5">
-                <!-- article -->
-                <article class="article card mb-5">
-                    <h5 class="article__header card-header">Featured</h5>
-                    <section class="article__body card-body">
-                        <h5 class="article__title card-title">Special title treatment</h5>
-                        <p class="article__text card-text">With supporting text below as a natural lead-in to additional content.</p>
-                        <a class="btn btn-primary" href="#">Go somewhere</a>
-                    </section>
-                </article>
+                <!-- admin panel -->
+                <security:authorize access="hasRole('USER') and hasRole('ADMIN')">
+                    <div class="row mb-2" style="padding-left: 12px;">
+                        <div class="col-auto control p-0">
+                            <i class="bi bi-plus-square-fill"></i>
+                        </div>
+                    </div>
+                </security:authorize>
 
-                <article class="article card mb-5">
-                    <h5 class="article__header card-header">Featured</h5>
-                    <section class="article__body card-body">
-                        <h5 class="article__title card-title">Special title treatment</h5>
-                        <p class="article__text card-text">With supporting text below as a natural lead-in to additional content.</p>
-                        <a class="btn btn-primary" href="#">Go somewhere</a>
-                    </section>
-                </article>
+                <!-- articles -->
+                <div class="row">
+                    <div class="col">
+                        <article class="article card mb-5">
+                            <h5 class="article__header card-header">Featured</h5>
+                            <section class="article__body card-body">
+                                <h5 class="article__title card-title">Special title treatment</h5>
+                                <p class="article__text card-text">With supporting text below as a natural lead-in to additional content.</p>
+                                <a class="btn btn-primary" href="#">Go somewhere</a>
+                            </section>
+                        </article>
 
-                <article class="article card mb-5">
-                    <h5 class="article__header card-header">Featured</h5>
-                    <section class="article__body card-body">
-                        <h5 class="article__title card-title">Special title treatment</h5>
-                        <p class="article__text card-text">With supporting text below as a natural lead-in to additional content.</p>
-                        <a class="btn btn-primary" href="#">Go somewhere</a>
-                    </section>
-                </article>
+                        <article class="article card mb-5">
+                            <h5 class="article__header card-header">Featured</h5>
+                            <section class="article__body card-body">
+                                <h5 class="article__title card-title">Special title treatment</h5>
+                                <p class="article__text card-text">With supporting text below as a natural lead-in to additional content.</p>
+                                <a class="btn btn-primary" href="#">Go somewhere</a>
+                            </section>
+                        </article>
 
-                <article class="article card mb-5">
-                    <h5 class="article__header card-header">Featured</h5>
-                    <section class="article__body card-body">
-                        <h5 class="article__title card-title">Special title treatment</h5>
-                        <p class="article__text card-text">With supporting text below as a natural lead-in to additional content.</p>
-                        <a class="btn btn-primary" href="#">Go somewhere</a>
-                    </section>
-                </article>
+                        <article class="article card mb-5">
+                            <h5 class="article__header card-header">Featured</h5>
+                            <section class="article__body card-body">
+                                <h5 class="article__title card-title">Special title treatment</h5>
+                                <p class="article__text card-text">With supporting text below as a natural lead-in to additional content.</p>
+                                <a class="btn btn-primary" href="#">Go somewhere</a>
+                            </section>
+                        </article>
+
+                        <article class="article card mb-5">
+                            <h5 class="article__header card-header">Featured</h5>
+                            <section class="article__body card-body">
+                                <h5 class="article__title card-title">Special title treatment</h5>
+                                <p class="article__text card-text">With supporting text below as a natural lead-in to additional content.</p>
+                                <a class="btn btn-primary" href="#">Go somewhere</a>
+                            </section>
+                        </article>
+                    </div>
+                </div>
             </div>
 
             <aside class="col-4 pe-5">

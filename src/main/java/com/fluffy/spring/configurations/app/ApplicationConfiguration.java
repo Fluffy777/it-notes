@@ -2,7 +2,11 @@ package com.fluffy.spring.configurations.app;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -45,20 +49,18 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
      */
 
     @Bean
-    public InternalResourceViewResolver viewResolver(
-            @Value("${application.view.prefix}") String prefix,
-            @Value("${application.view.suffix}") String suffix) {
+    public InternalResourceViewResolver viewResolver() {
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-        viewResolver.setPrefix(prefix);
-        viewResolver.setSuffix(suffix);
+        viewResolver.setPrefix("/WEB-INF/views/");
+        viewResolver.setSuffix(".jsp");
         return viewResolver;
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry
-                .addResourceHandler(env.getProperty("application.static-path-pattern"))
-                .addResourceLocations(env.getProperty("application.resources.static-locations"));
+                .addResourceHandler("/resources/**")
+                .addResourceLocations("/resources/");
         exposeDirectory("icons", registry);
     }
 
@@ -102,7 +104,7 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
     // для розв'язання циклічної залежності між SecurityConfiguration та AuthenticationProviderImpl
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(Integer.parseInt(env.getProperty("application.security.password-encoder-strength")));
+        return new BCryptPasswordEncoder();
     }
 
     @Bean

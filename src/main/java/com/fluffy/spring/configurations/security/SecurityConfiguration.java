@@ -63,6 +63,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers(env.getProperty("application.static-path-pattern"));
+        web.ignoring().antMatchers("/resources/**");
     }
 }

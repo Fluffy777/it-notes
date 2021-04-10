@@ -12,8 +12,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
@@ -65,6 +67,7 @@ public class UserController {
         User user = userService.findByEmail(AuthController.getCurrentUsername());
         modelMap.addAttribute("userDataForm", new UserDataForm());
         modelMap.addAttribute("user", user);
+        modelMap.addAttribute("iconsUploadPath", "icons");
         return "profile";
     }
 
@@ -80,47 +83,31 @@ public class UserController {
         User user = userService.findByEmail(AuthController.getCurrentUsername());
 
         // треба перенести деякі дані, щоб об'єкт currentUser міг представляти
-        // поточного користувача (TODO: +icon - під час оновлення даної ділянки
-        // коду)
+        // поточного користувача
         currentUser.setId(user.getId());
         currentUser.setEnabled(user.isEnabled());
         currentUser.setRday(user.getRday());
 
-        // щоб уникнути зміну зображення, якщо та не відбулася
-        currentUser.setIcon(user.getIcon());
-
         if (!bindingResult.hasErrors()) {
-            // видалити попередній файл (и) ...
+            // видалення останніх файлів іконок користувача, якщо відбувається
+            // зміна іконки
+            String newIcon = currentUser.getIcon();
 
-            // файл завантажується лише тоді, коли всі інші дані не містять
-            // помилок - імітується "транзакція", її атомарність
+            if (newIcon != null && !newIcon.isEmpty()) {
+                String uploadDir = "icons/" + currentUser.getId();
+                FileSystemUtils.deleteRecursively(Paths.get(uploadDir).toFile());
 
+                // файл завантажується лише тоді, коли всі інші дані не містять
+                // помилок - імітується "транзакція", її атомарність
+                MultipartFile multipartFile = userDataForm.getIcon();
+                String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+                currentUser.setIcon(fileName);
 
-
-            /*
-            MultipartFile multipartFile = userDataForm.getIcon();
-            String fileName = multipartFile.getOriginalFilename();
-
-            String uploadPath = servletContext.getRealPath(env.getProperty("application.resources.upload-path")) + File.separator + currentUser.getId();
-            String visibleUploadPath = File.separator + fileName
-
-            Path path = Paths.get(uploadPath);
-            if (!Files.exists(path)) {
-                Files.createDirectories(path);
+                FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
+            } else {
+                // завантаження іконки не відбувалося - можна використати попередню
+                currentUser.setIcon(user.getIcon());
             }
-            //uploadPath += File.separator + multipartFile.getOriginalFilename();
-            FileCopyUtils.copy(multipartFile.getBytes(), new File(uploadPath));
-            currentUser.setIcon(uploadPath);
-             */
-
-            MultipartFile multipartFile = userDataForm.getIcon();
-            String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-            currentUser.setIcon(fileName);
-
-            String uploadDir = "icons/" + currentUser.getId();
-            FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
-
-
 
             // під час проходження валідації помилок не виникало - треба
             // оновити дані про поточного користувача
@@ -145,6 +132,11 @@ public class UserController {
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
             SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(email, password, userDetails.getAuthorities()));
+        } else {
+            // поточному користувачу треба встановити іконку, що
+            // використовувалася раніше, оскільки оновлення не відбулося
+            // (для уникнення втрати відображення попередньої іконки)
+            currentUser.setIcon(user.getIcon());
         }
 
         return new ModelAndView("profile", "user", currentUser);

@@ -53,15 +53,18 @@ body {
   cursor: pointer;
 }
 
-.control-to-top {
-  position: fixed;
-  bottom: 1em;
-  right: 1em;
+.control {
   font-size: 200%;
 }
 
-.control-to-top:hover {
+.control:hover {
   color: #ffc737;
+}
+
+.control--to-top {
+  position: fixed;
+  bottom: 1em;
+  right: 1em;
 }
 
 .article {

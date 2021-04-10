@@ -20,6 +20,26 @@ public class UserDataFormValidator extends SignUpFormValidator {
         this.passwordEncoder = passwordEncoder;
     }
 
+    private boolean matchWithWildcards(String first, String second) {
+        if (first.length() == 0 && second.length() == 0)
+            return true;
+
+        if (first.length() > 1 && first.charAt(0) == '*' &&
+                second.length() == 0)
+            return false;
+
+        if ((first.length() > 1 && first.charAt(0) == '?') ||
+                (first.length() != 0 && second.length() != 0 &&
+                        first.charAt(0) == second.charAt(0)))
+            return matchWithWildcards(first.substring(1),
+                    second.substring(1));
+
+        if (first.length() > 0 && first.charAt(0) == '*')
+            return matchWithWildcards(first.substring(1), second) ||
+                    matchWithWildcards(first, second.substring(1));
+        return false;
+    }
+
     @Override
     public boolean supports(Class<?> aClass) {
         return aClass.equals(UserDataForm.class);
@@ -37,12 +57,10 @@ public class UserDataFormValidator extends SignUpFormValidator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "logInForm.email.empty");
 
         MultipartFile file = userDataForm.getIcon();
-        if (file != null) {
-            if (file.isEmpty()) {
-                errors.rejectValue("icon", "userDataForm.icon.empty");
+        if (file != null && !file.isEmpty()) {
+            if (!matchWithWildcards("image/*", file.getContentType())) {
+                errors.rejectValue("icon", "userDataForm.icon.typeMismatch");
             }
-            // перевірка типу ...
-
         }
 
         // перевірка на коректність

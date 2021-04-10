@@ -2,12 +2,14 @@ package com.fluffy.spring.configurations.security;
 
 import com.fluffy.spring.domain.User;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class UserDetailsImpl implements UserDetails {
+    private static final String ROLE_PREFIX = "ROLE_";
     private final User user;
 
     public UserDetailsImpl(User user) {
@@ -16,7 +18,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return user.getRoles().stream().map(role -> new SimpleGrantedAuthority(ROLE_PREFIX + role.getName())).collect(Collectors.toSet());
     }
 
     @Override
