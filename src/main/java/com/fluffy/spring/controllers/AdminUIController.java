@@ -23,16 +23,16 @@ import java.util.Date;
 
 @Controller
 @PreAuthorize("hasRole('ADMIN')")
-public class AdminController {
+public class AdminUIController {
     private final Validator aritcleFormValidator;
     private final ArticleService articleService;
     private final CategoryService categoryService;
     private final UserService userService;
 
-    public AdminController(@Qualifier("articleFormValidator") Validator aritcleFormValidator,
-                           ArticleService articleService,
-                           CategoryService categoryService,
-                           UserService userService) {
+    public AdminUIController(@Qualifier("articleFormValidator") Validator aritcleFormValidator,
+                             ArticleService articleService,
+                             CategoryService categoryService,
+                             UserService userService) {
         this.aritcleFormValidator = aritcleFormValidator;
         this.articleService = articleService;
         this.categoryService = categoryService;

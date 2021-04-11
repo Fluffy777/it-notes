@@ -16,8 +16,23 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public boolean create(Article article) {
+    public Article create(Article article) {
         return articleDAO.insert(article);
+    }
+
+    @Override
+    public Article update(int articleId, Article article) {
+        return articleDAO.update(articleId, article);
+    }
+
+    @Override
+    public boolean delete(int articleId) {
+        return articleDAO.delete(articleId);
+    }
+
+    @Override
+    public Article findById(int articleId) {
+        return articleDAO.getById(articleId);
     }
 
     @Override

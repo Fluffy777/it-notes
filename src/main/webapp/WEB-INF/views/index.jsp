@@ -23,28 +23,22 @@
     <div class="container-fluid">
         <div class="row mb-4">
             <div class="col-8 px-5">
-                <!-- admin panel -->
-                <security:authorize access="hasRole('USER') and hasRole('ADMIN')">
-                    <div class="row mb-2" style="padding-left: 12px;">
+                <!-- panel -->
+
+                <div class="row mb-2" style="padding-left: 12px;">
+                    <security:authorize access="hasRole('USER') and hasRole('ADMIN')">
                         <a class="col-auto control p-0" href="${pageContext.request.contextPath}/articles/create">
                             <i class="bi bi-plus-square-fill"></i>
                         </a>
+                    </security:authorize>
+                    <div class="col-auto control p-0" onclick="getAllArticles()">
+                        <i class="bi bi-arrow-clockwise"></i>
                     </div>
-                </security:authorize>
+                </div>
 
                 <!-- articles -->
                 <div class="row">
-                    <div class="col">
-                        <c:forEach var="article" items="${articles}">
-                            <article class="article card mb-5">
-                                <h5 class="article__header card-header">${article.category.name}</h5>
-                                <section class="article__body card-body">
-                                    <h5 class="article__title card-title">${article.name}</h5>
-                                    <p class="article__text card-text">${article.content}</p>
-                                    <a class="btn btn-primary" href="${pageContext.request.contextPath}/articles/${article.id}">Читати далі</a>
-                                </section>
-                            </article>
-                        </c:forEach>
+                    <div id="articles" class="col">
                     </div>
                 </div>
             </div>
@@ -100,5 +94,65 @@
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+
+    <!-- JQuery -->
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    -->
+    <script src="<c:url value="/resources/static/js/jquery-3.6.0.min.js"/>"></script>
+
+    <script type="text/javascript">
+        const baseUrl = location.protocol + "//" + location.host + "${pageContext.request.contextPath}";
+        $(document).ready(function() {
+            getAllArticles();
+        });
+
+        function getAllArticles() {
+            let articles = "";
+            $.ajax({
+                url: baseUrl + "/api/articles",
+                method: "GET",
+                dataType: "json",
+                contentType: "application/json",
+
+                success: function(data) {
+                    if (data.length === 0) {
+                        articles = getAlertMessage("alert-warning", "Попередження:", "жодної статті не знайдено!");
+                    }
+
+                    $.each(data, function() {
+                        articles = appendArticle(articles, this.category.name, this.name, this.content, this.id);
+                    });
+
+                    $("#articles").html(articles);
+                },
+
+                error: function () {
+                    articles = getAlertMessage("alert-danger", "Помилка:", "сталася помилка під час отримання даних про статті!");
+                    $("#articles").html(articles);
+                }
+            });
+        }
+
+        function appendArticle(articles, categoryName, name, content, id) {
+            return articles + '<article class="article card mb-5">'
+                            + '<h5 class="article__header card-header">' + categoryName + '</h5>'
+                            + '<section class="article__body card-body">'
+                            + '<h5 class="article__title card-title">' + name + '</h5>'
+                            + '<p class="article__text card-text">' + content + '</p>'
+                            + '<a class="btn btn-primary" href="${pageContext.request.contextPath}/articles/' + id + '">Читати далі</a>'
+                            <security:authorize access="hasRole('USER') and hasRole('ADMIN')">
+                            + '<a class="btn btn-secondary ms-2" href="${pageContext.request.contextPath}/articles/' + id + '">Редагувати</a>'
+                            </security:authorize>
+                            + '</section>'
+                            + '</article>';
+        }
+
+        function getAlertMessage(type, title, content) {
+            return '<div class="alert ' + type +' alert-dismissible fade show" role="alert">'
+                    + '<strong>' + title + '</strong> ' + content
+                    + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'
+                    + '</div>';
+        }
+    </script>
 </body>
 </html>

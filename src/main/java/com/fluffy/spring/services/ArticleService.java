@@ -5,7 +5,13 @@ import com.fluffy.spring.domain.Article;
 import java.util.List;
 
 public interface ArticleService {
-    boolean create(Article article);
+    Article create(Article article);
+
+    Article update(int articleId, Article article);
+
+    boolean delete(int articleId);
+
+    Article findById(int articleId);
 
     List<Article> findAll();
 

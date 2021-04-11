@@ -12,7 +12,11 @@ public interface ArticleDAO {
 
     List<Article> getAllByCategoryId(int categoryId);
 
-    boolean insert(Article article);
+    Article insert(Article article);
+
+    Article update(int articleId, Article article);
+
+    boolean delete(int articleId);
 
     List<Article> getMostPopular(int topSize);
 }

@@ -5,6 +5,7 @@ import com.fluffy.spring.daos.ConnectionDAO;
 import com.fluffy.spring.daos.exceptions.DBConnectionException;
 import com.fluffy.spring.daos.exceptions.PersistException;
 import com.fluffy.spring.domain.Category;
+import com.fluffy.spring.domain.User;
 import oracle.jdbc.OraclePreparedStatement;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,8 @@ public class OracleCategoryDAO implements CategoryDAO {
     private static final String QUERY_GET = QUERY_GET_ALL + " WHERE category_id = ?";
     private static final String QUERY_GET_BY_NAME = QUERY_GET_ALL + " WHERE name = ?";
     private static final String QUERY_INSERT = "INSERT INTO categories (category_id, name) VALUES (categories_seq.nextval, ?)";
+    private static final String QUERY_UPDATE = "UPDATE categories SET name = ? WHERE category_id = ?";
+    private static final String QUERY_DELETE = "DELETE FROM categories WHERE category_id = ?";
     private final ConnectionDAO connectionDAO;
 
     private Category newInstance(final ResultSet resultSet) throws SQLException {
@@ -102,18 +105,15 @@ public class OracleCategoryDAO implements CategoryDAO {
     @Override
     public Category insert(Category category) {
         try (Connection connection = connectionDAO.getConnection()) {
-            String[] cols = new String[] {"CATEGORY_ID", "NAME"};
-            try (OraclePreparedStatement statement = (OraclePreparedStatement) connection.prepareStatement(QUERY_INSERT, cols)) {
+            String[] columns = new String[] {"CATEGORY_ID", "NAME"};
+            try (PreparedStatement statement = connection.prepareStatement(QUERY_INSERT, columns)) {
                 int seq = 0;
                 statement.setString(++seq, category.getName());
 
-                int affectedRowsCount = statement.executeUpdate();
-                if (affectedRowsCount > 0) {
+                if (statement.executeUpdate() > 0) {
                     ResultSet resultSet = statement.getGeneratedKeys();
                     resultSet.next();
-
                     category.setId(resultSet.getInt(1));
-                    System.out.println("new: " + category.getId());
                 }
 
             } catch (SQLException e) {
@@ -123,5 +123,41 @@ public class OracleCategoryDAO implements CategoryDAO {
             throw new DBConnectionException("Не вдалося отримати з'єднання із базою даних", e);
         }
         return category;
+    }
+
+    @Override
+    public Category update(int categoryId, Category category) {
+        try (Connection connection = connectionDAO.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(QUERY_UPDATE)) {
+                int seq = 0;
+                statement.setString(++seq, category.getName());
+                statement.setInt(++seq, categoryId);
+
+                if (statement.executeUpdate() > 0) {
+                    return category;
+                }
+            } catch (SQLException e) {
+                throw new PersistException("Не вдалося виконати запит на оновлення інформації про категорію", e);
+            }
+        } catch (SQLException e) {
+            throw new DBConnectionException("Не вдалося отримати з'єднання із базою даних", e);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean delete(int categoryId) {
+        try (Connection connection = connectionDAO.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(QUERY_DELETE)) {
+                int seq = 0;
+                statement.setInt(++seq, categoryId);
+
+                return statement.executeUpdate() > 0;
+            } catch (SQLException e) {
+                throw new PersistException("Не вдалося виконати запит на видалення інформації про категорію", e);
+            }
+        } catch (SQLException e) {
+            throw new DBConnectionException("Не вдалося отримати з'єднання із базою даних", e);
+        }
     }
 }

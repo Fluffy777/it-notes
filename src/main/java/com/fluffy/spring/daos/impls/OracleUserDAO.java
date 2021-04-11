@@ -22,7 +22,7 @@ public class OracleUserDAO implements UserDAO {
     private static final String QUERY_GET_ALL = "SELECT * FROM users";
     private static final String QUERY_GET = QUERY_GET_ALL + " WHERE user_id = ?";
     private static final String QUERY_GET_BY_EMAIL =  QUERY_GET_ALL + " WHERE email = ?";
-    private static final String QUERY_INSERT = "INSERT INTO users (enabled, first_name, last_name, gender, email, password, rday, bday, description, address, icon) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String QUERY_INSERT = "INSERT INTO users (user_id, enabled, first_name, last_name, gender, email, password, rday, bday, description, address, icon) VALUES (users_seq.nextval, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String QUERY_UPDATE = "UPDATE users SET enabled = ?, first_name = ?, last_name = ?, gender = ?, email = ?, password = ?, rday = ?, bday = ?, description = ?, address = ?, icon = ? WHERE user_id = ?";
     private static final String QUERY_DELETE = "DELETE FROM users WHERE user_id = ?";
     private final UserRoleDTO userRoleDTO;
@@ -118,9 +118,10 @@ public class OracleUserDAO implements UserDAO {
     }
 
     @Override
-    public boolean insert(final User user) {
+    public User insert(final User user) {
         try (Connection connection = connectionDAO.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(QUERY_INSERT)) {
+            String[] columns = new String[]{"USER_ID", "ENABLED", "FIRST_NAME", "LAST_NAME", "GENDER", "EMAIL", "PASSWORD", "RDAY", "BDAY", "DESCRIPTION", "ADDRESS", "ICON"};
+            try (PreparedStatement statement = connection.prepareStatement(QUERY_INSERT, columns)) {
                 int seq = 0;
                 statement.setString(++seq, user.isEnabled() ? "Y" : "N");
                 statement.setString(++seq, user.getFirstName());
@@ -134,17 +135,22 @@ public class OracleUserDAO implements UserDAO {
                 statement.setString(++seq, user.getAddress());
                 statement.setString(++seq, user.getIcon());
 
-                return statement.executeUpdate() != 0;
+                if (statement.executeUpdate() > 0) {
+                    ResultSet resultSet = statement.getGeneratedKeys();
+                    resultSet.next();
+                    user.setId(resultSet.getInt(1));
+                }
             } catch (SQLException e) {
                 throw new PersistException("Не вдалося виконати запит на додавання інформації про користувача", e);
             }
         } catch (SQLException e) {
             throw new DBConnectionException("Не вдалося отримати з'єднання із базою даних", e);
         }
+        return user;
     }
 
     @Override
-    public boolean update(final int primaryKey, final User user) {
+    public User update(final int primaryKey, final User user) {
         try (Connection connection = connectionDAO.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(QUERY_UPDATE)) {
                 int seq = 0;
@@ -161,13 +167,16 @@ public class OracleUserDAO implements UserDAO {
                 statement.setString(++seq, user.getIcon());
                 statement.setInt(++seq, primaryKey);
 
-                return statement.executeUpdate() != 0;
+                if (statement.executeUpdate() > 0) {
+                    return user;
+                }
             } catch (SQLException e) {
                 throw new PersistException("Не вдалося виконати запит на оновлення інформації про користувача", e);
             }
         } catch (SQLException e) {
             throw new DBConnectionException("Не вдалося отримати з'єднання із базою даних", e);
         }
+        return null;
     }
 
     @Override
@@ -177,7 +186,7 @@ public class OracleUserDAO implements UserDAO {
                 int seq = 0;
                 statement.setInt(++seq, primaryKey);
 
-                return statement.executeUpdate() != 0;
+                return statement.executeUpdate() > 0;
             } catch (SQLException e) {
                 throw new PersistException("Не вдалося виконати запит на видалення інформації про користувача");
             }

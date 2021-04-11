@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 @Controller
-public class UserController {
+public class UserUIController {
     private final Validator userDataFormValidator;
     private final UserService userService;
     private final UserDetailsService userDetailsService;
@@ -39,12 +39,12 @@ public class UserController {
     private final ServletContext servletContext;
     private final Environment env;
 
-    public UserController(@Qualifier("userDataFormValidator") Validator userDataFormValidator,
-                          UserService userService,
-                          UserDetailsService userDetailsService,
-                          PasswordEncoder passwordEncoder,
-                          ServletContext servletContext,
-                          Environment env) {
+    public UserUIController(@Qualifier("userDataFormValidator") Validator userDataFormValidator,
+                            UserService userService,
+                            UserDetailsService userDetailsService,
+                            PasswordEncoder passwordEncoder,
+                            ServletContext servletContext,
+                            Environment env) {
         this.userDataFormValidator = userDataFormValidator;
         this.userService = userService;
         this.userDetailsService = userDetailsService;

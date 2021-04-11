@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -19,12 +20,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findById(int userId) {
+        return userDAO.getById(userId);
+    }
+
+    @Override
     public User findByEmail(String email) {
         return userDAO.getByEmail(email);
     }
 
     @Override
-    public boolean create(User user) {
+    public User create(User user) {
         // під час створення вважаємо, що користувач не є заблокованим, а часом
         // регістрації - цей момент
         user.setEnabled(true);
@@ -33,7 +39,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean update(int userId, User user) {
+    public User update(int userId, User user) {
         return userDAO.update(userId, user);
+    }
+
+    @Override
+    public boolean delete(int userId) {
+        return userDAO.delete(userId);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userDAO.getAll();
     }
 }

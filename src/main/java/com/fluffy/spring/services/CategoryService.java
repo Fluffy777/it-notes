@@ -9,6 +9,10 @@ public interface CategoryService {
 
     Category create(Category category);
 
+    Category update(int categoryId, Category category);
+
+    boolean delete (int categoryId);
+
     List<Category> findAll();
 
     Category findById(int categoryId);

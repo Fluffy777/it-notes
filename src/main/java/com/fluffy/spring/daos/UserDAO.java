@@ -11,9 +11,9 @@ public interface UserDAO {
 
     User getByEmail(String email);
 
-    boolean insert(User user);
+    User insert(User user);
 
-    boolean update(int userId, User user);
+    User update(int userId, User user);
 
     boolean delete(int userId);
 }
