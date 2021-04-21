@@ -1,11 +1,16 @@
 package com.fluffy.spring.daos.impls;
 
 import com.fluffy.spring.daos.ConnectionDAO;
+import com.fluffy.spring.daos.RoleDAO;
 import com.fluffy.spring.daos.UserDAO;
-import com.fluffy.spring.daos.UserRoleDTO;
+import com.fluffy.spring.daos.UserRoleDAO;
 import com.fluffy.spring.domain.User;
 import com.fluffy.spring.daos.exceptions.DBConnectionException;
 import com.fluffy.spring.daos.exceptions.PersistException;
+import com.fluffy.spring.domain.UserRole;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -13,27 +18,82 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Клас біна, що дозволяє безпосередньо отримувати інформацію про користувачів
+ * із бази даних Oracle.
+ * @author Сивоконь Вадим
+ */
 @Component
 public class OracleUserDAO implements UserDAO {
+    /**
+     * Для забезпечення логування.
+     */
+    private static final Logger logger = Logger.getLogger(OracleUserDAO.class);
+
+    /**
+     * Запит на отримання всіх користувачів.
+     */
     private static final String QUERY_GET_ALL = "SELECT * FROM users";
+
+    /**
+     * Запит на отримання всіх користувачів із роллю, що має певну назву.
+     */
+    private static final String QUERY_GET_ALL_WITH_ROLE_NAME = QUERY_GET_ALL
+            + " JOIN user_role ON (users.user_id = user_role.user_id) "
+            + "JOIN roles ON (roles.role_id = user_role.role_id) "
+            + "WHERE roles.name = ?";
+
+    /**
+     * Запит на отримання користувача за ID.
+     */
     private static final String QUERY_GET = QUERY_GET_ALL + " WHERE user_id = ?";
+
+    /**
+     * Запит на отримання користувача за електронною поштою.
+     */
     private static final String QUERY_GET_BY_EMAIL =  QUERY_GET_ALL + " WHERE email = ?";
+
+    /**
+     * Запит на збереження моделі користувача у базі даних.
+     */
     private static final String QUERY_INSERT = "INSERT INTO users (user_id, enabled, first_name, last_name, gender, email, password, rday, bday, description, address, icon) VALUES (users_seq.nextval, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    /**
+     * Запит на оновлення моделі користувача у базі даних.
+     */
     private static final String QUERY_UPDATE = "UPDATE users SET enabled = ?, first_name = ?, last_name = ?, gender = ?, email = ?, password = ?, rday = ?, bday = ?, description = ?, address = ?, icon = ? WHERE user_id = ?";
+
+    /**
+     * Запит на видалення моделі користувача у базі даних.
+     */
     private static final String QUERY_DELETE = "DELETE FROM users WHERE user_id = ?";
-    private final UserRoleDTO userRoleDTO;
+
+    /**
+     * Бін для отримання підключення до бази даних.
+     */
     private final ConnectionDAO connectionDAO;
+
+    /**
+     * Бін для отримання інформації про ролі користувачів.
+     */
+    private UserRoleDAO userRoleDAO;
+
+    /**
+     * Бін для отримання інформації про ролі.
+     */
+    private RoleDAO roleDAO;
 
     private User newInstance(final ResultSet resultSet) throws SQLException {
         User user = new User();
         int userId = resultSet.getInt("user_id");
         user.setId(userId);
+
         // roles
-        user.setRoles(userRoleDTO.getAllByUserId(userId));
+        user.setRoles(userRoleDAO.getAllByUserId(userId));
+
         user.setEnabled(resultSet.getString("enabled").equals("Y"));
         user.setFirstName(resultSet.getString("first_name"));
         user.setLastName(resultSet.getString("last_name"));
@@ -48,11 +108,35 @@ public class OracleUserDAO implements UserDAO {
         return user;
     }
 
-    public OracleUserDAO(final ConnectionDAO connectionDAO, final UserRoleDTO userRoleDTO) {
+    /**
+     * Створює бін для отримання інформації про користувачів.
+     * @param connectionDAO бін для отримання підключення до бази даних
+     */
+    public OracleUserDAO(final ConnectionDAO connectionDAO) {
         this.connectionDAO = connectionDAO;
-        this.userRoleDTO = userRoleDTO;
     }
 
+    /**
+     * Autowiring біна для отримання інформації про ролі.
+     * @param roleDAO бін для отримання інформації про ролі
+     */
+    @Autowired
+    public void setRoleDAO(final RoleDAO roleDAO) {
+        this.roleDAO = roleDAO;
+    }
+
+    /**
+     * Autowiring біна для отримання інформації про ролі користувачів.
+     * @param userRoleDAO бін для отримання інформації про ролі користувачів
+     */
+    @Autowired
+    public void setUserRoleDAO(final UserRoleDAO userRoleDAO) {
+        this.userRoleDAO = userRoleDAO;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public User getById(final int userId) {
         try (Connection connection = connectionDAO.getConnection()) {
@@ -63,19 +147,25 @@ public class OracleUserDAO implements UserDAO {
                 if (resultSet.next()) {
                     User user = newInstance(resultSet);
                     if (resultSet.next()) {
+                        logger.log(Level.ERROR, "Існує декілька користувачів, у яких user_id = " + userId);
                         throw new PersistException("Існує декілька користувачів, у яких user_id = " + userId);
                     }
                     return user;
                 }
                 return null;
             } catch (SQLException e) {
+                logger.log(Level.ERROR, "Не вдалося виконати запит на отримання даних про користувача, у якого user_id = " + userId, e);
                 throw new PersistException("Не вдалося виконати запит на отримання даних про користувача, у якого user_id = " + userId, e);
             }
         } catch (SQLException e) {
+            logger.log(Level.ERROR, "Не вдалося отримати з'єднання із базою даних", e);
             throw new DBConnectionException("Не вдалося отримати з'єднання із базою даних", e);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<User> getAll() {
         try (Connection connection = connectionDAO.getConnection()) {
@@ -87,13 +177,42 @@ public class OracleUserDAO implements UserDAO {
                 }
                 return users;
             } catch (SQLException e) {
+                logger.log(Level.ERROR, "Не вдалося виконати запит на отримання даних про всі ролі", e);
                 throw new PersistException("Не вдалося виконати запит на отримання даних про всі ролі", e);
             }
         } catch (SQLException e) {
+            logger.log(Level.ERROR, "Не вдалося отримати з'єднання із базою даних", e);
             throw new DBConnectionException("Не вдалося отримати з'єднання із базою даних", e);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<User> getAllWithRoleName(final String roleName) {
+        try (Connection connection = connectionDAO.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(QUERY_GET_ALL_WITH_ROLE_NAME);
+            statement.setString(1, roleName);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                List<User> users = new LinkedList<>();
+                while (resultSet.next()) {
+                    users.add(newInstance(resultSet));
+                }
+                return users;
+            } catch (SQLException e) {
+                logger.log(Level.ERROR, "Не вдалося виконати запит на отримання даних про всіх користувачів, що мають роль із name = " + roleName, e);
+                throw new PersistException("Не вдалося виконати запит на отримання даних про всіх користувачів, що мають роль із name = " + roleName, e);
+            }
+        } catch (SQLException e) {
+            logger.log(Level.ERROR, "Не вдалося отримати з'єднання із базою даних", e);
+            throw new DBConnectionException("Не вдалося отримати з'єднання із базою даних", e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public User getByEmail(final String email) {
         try (Connection connection = connectionDAO.getConnection()) {
@@ -104,19 +223,25 @@ public class OracleUserDAO implements UserDAO {
                 if (resultSet.next()) {
                     User user = newInstance(resultSet);
                     if (resultSet.next()) {
+                        logger.log(Level.ERROR, "Існує декілька користувачів, у яких email = " + email);
                         throw new PersistException("Існує декілька користувачів, у яких email = " + email);
                     }
                     return user;
                 }
                 return null;
             } catch (SQLException e) {
+                logger.log(Level.ERROR, "Не вдалося виконати запит на отримання даних про користувача, у якого email = " + email, e);
                 throw new PersistException("Не вдалося виконати запит на отримання даних про користувача, у якого email = " + email, e);
             }
         } catch (SQLException e) {
+            logger.log(Level.ERROR, "Не вдалося отримати з'єднання із базою даних", e);
             throw new DBConnectionException("Не вдалося отримати з'єднання із базою даних", e);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public User insert(final User user) {
         try (Connection connection = connectionDAO.getConnection()) {
@@ -138,17 +263,29 @@ public class OracleUserDAO implements UserDAO {
                 if (statement.executeUpdate() > 0) {
                     ResultSet resultSet = statement.getGeneratedKeys();
                     resultSet.next();
-                    user.setId(resultSet.getInt(1));
+
+                    int userId = resultSet.getInt(1);
+                    user.setId(userId);
+
+                    UserRole userRole = new UserRole();
+                    userRole.setUser(user);
+                    userRole.setRole(roleDAO.getByName("USER"));
+                    userRoleDAO.insert(userRole);
                 }
             } catch (SQLException e) {
+                logger.log(Level.ERROR, "Не вдалося виконати запит на додавання інформації про користувача", e);
                 throw new PersistException("Не вдалося виконати запит на додавання інформації про користувача", e);
             }
         } catch (SQLException e) {
+            logger.log(Level.ERROR, "Не вдалося отримати з'єднання із базою даних", e);
             throw new DBConnectionException("Не вдалося отримати з'єднання із базою даних", e);
         }
         return user;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public User update(final int primaryKey, final User user) {
         try (Connection connection = connectionDAO.getConnection()) {
@@ -171,14 +308,19 @@ public class OracleUserDAO implements UserDAO {
                     return user;
                 }
             } catch (SQLException e) {
+                logger.log(Level.ERROR, "Не вдалося виконати запит на оновлення інформації про користувача", e);
                 throw new PersistException("Не вдалося виконати запит на оновлення інформації про користувача", e);
             }
         } catch (SQLException e) {
+            logger.log(Level.ERROR, "Не вдалося отримати з'єднання із базою даних", e);
             throw new DBConnectionException("Не вдалося отримати з'єднання із базою даних", e);
         }
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean delete(final int primaryKey) {
         try (Connection connection = connectionDAO.getConnection()) {
@@ -188,9 +330,11 @@ public class OracleUserDAO implements UserDAO {
 
                 return statement.executeUpdate() > 0;
             } catch (SQLException e) {
+                logger.log(Level.ERROR, "Не вдалося виконати запит на видалення інформації про користувача");
                 throw new PersistException("Не вдалося виконати запит на видалення інформації про користувача");
             }
         } catch (SQLException e) {
+            logger.log(Level.ERROR, "Не вдалося отримати з'єднання із базою даних", e);
             throw new DBConnectionException("Не вдалося отримати з'єднання із базою даних", e);
         }
     }

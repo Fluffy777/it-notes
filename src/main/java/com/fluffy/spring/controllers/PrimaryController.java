@@ -1,28 +1,27 @@
 package com.fluffy.spring.controllers;
 
-import com.fluffy.spring.services.ArticleService;
-import com.fluffy.spring.services.CategoryService;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * Клас основного контролера додатку, що керує відображенням основних сторінок.
+ * @author Сивоконь Вадим
+ */
 @Controller
 public class PrimaryController {
-    private final ArticleService articleService;
-    private final CategoryService categoryService;
+    /**
+     * Для забезпечення логування.
+     */
+    private static final Logger logger = Logger.getLogger(PrimaryController.class);
 
-    public PrimaryController(ArticleService articleService, CategoryService categoryService) {
-        this.articleService = articleService;
-        this.categoryService = categoryService;
-    }
-
+    /**
+     * Перехід на початкову сторінку.
+     * @return назва початкової сторінки
+     */
     @GetMapping("/")
-    public String index(ModelMap modelMap) {
-        modelMap.addAttribute("articles", articleService.findAll());
-        modelMap.addAttribute("categories", categoryService.findAll());
-        modelMap.addAttribute("mostPopularArticles", articleService.findMostPopular(3));
+    public String index() {
+        logger.info("Здійснений перехід на основну сторінку");
         return "index";
     }
 }

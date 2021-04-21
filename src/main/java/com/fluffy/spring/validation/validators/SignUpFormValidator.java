@@ -1,28 +1,46 @@
-package com.fluffy.spring.validation.validators.users;
+package com.fluffy.spring.validation.validators;
 
 import com.fluffy.spring.services.UserService;
-import com.fluffy.spring.validation.forms.users.SignUpForm;
+import com.fluffy.spring.validation.forms.SignUpForm;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
+/**
+ * Клас валідатора форми реєстрації.
+ * @author Сивоконь Вадим
+ */
 @Service
 public class SignUpFormValidator extends LogInFormValidator {
+    /**
+     * Сервіс для отримання даних про користувачів.
+     */
     protected final UserService userService;
 
-    public SignUpFormValidator(UserService userService, Environment env) {
+    /**
+     * Створює об'єкт (бін) валідатора.
+     * @param userService сервіс для отримання даних про користувачів
+     * @param env бін для отримання значень властивостей
+     */
+    public SignUpFormValidator(final UserService userService, final Environment env) {
         super(env);
         this.userService = userService;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public boolean supports(Class<?> clazz) {
+    public boolean supports(final Class<?> clazz) {
         return clazz.equals(SignUpForm.class);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void validate(Object target, Errors errors) {
+    public void validate(final Object target, final Errors errors) {
         super.validate(target, errors);
         SignUpForm signUpForm = (SignUpForm) target;
 
@@ -45,5 +63,11 @@ public class SignUpFormValidator extends LogInFormValidator {
 
         // перевірка на довжину опціональних рядків
         validateNullableStringByLength(signUpForm.getAddress(), Integer.parseInt(env.getProperty("application.validation.signUpForm.address.maxLength")), errors, "address", env.getProperty("signUpForm.address.tooLong"));
+
+        if (errors.hasErrors()) {
+            logger.warn("Наявні помилки валідації: " + errors.getAllErrors());
+        } else {
+            logger.info("Валідація успішно завершена");
+        }
     }
 }

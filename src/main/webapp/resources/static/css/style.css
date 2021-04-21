@@ -3,7 +3,7 @@
 }
 
 body {
-  padding-top: 100px;
+  padding-top: 120px;
   height: 100vh;
   font-size: 20px;
   background: #f5f5f5;
@@ -55,6 +55,7 @@ body {
 
 .control {
   font-size: 200%;
+  cursor: pointer;
 }
 
 .control:hover {
@@ -129,4 +130,16 @@ body {
 input + span, textarea + span {
   font-size: 0.75em;
   color: #dc3545;
+}
+
+.page-item {
+  cursor: pointer;
+}
+
+#categories>li {
+  cursor: pointer;
+}
+
+.clickable {
+  cursor: pointer;
 }

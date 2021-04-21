@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
+<!DOCTYPE html>
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
@@ -31,12 +32,12 @@
                     </c:if>
                     <div class="mb-3">
                         <label class="form-label" for="input-email">Електронна пошта</label>
-                        <form:input path="email" class="form-control" type="text" name="email" id="input-email" required="required"/>
+                        <form:input path="email" class="form-control" type="text" name="email" id="input-email" placeholder="john_doe@example.com" maxlength="320" required="required"/>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label" for="input-password">Пароль</label>
-                        <form:input path="password" class="form-control" type="password" name="password" id="input-password" required="required"/>
+                        <form:input path="password" class="form-control" type="password" name="password" id="input-password" placeholder="8+ символів (букви обох регістрів, цифри)" maxlength="60" required="required"/>
                     </div>
                     <button class="btn btn-success w-100 mb-3" type="submit">Авторизуватися</button>
 
@@ -52,5 +53,46 @@
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+
+    <!-- JQuery -->
+    <script src="<c:url value="/resources/static/js/jquery-3.6.0.min.js"/>"></script>
+
+    <!-- alert -->
+    <jsp:include page="/WEB-INF/components/alert.jsp"/>
+    <script src="<c:url value="/resources/static/js/alert.js"/>"></script>
+
+    <script>
+        $(document).ready(function() {
+            initValidation();
+        });
+
+        function initValidation() {
+            $("form").submit(function (event) {
+                let message = validate();
+                if (message !== "") {
+                    customAlert("danger", "Помилка", message);
+                    event.preventDefault();
+                }
+            });
+        }
+
+        function validate() {
+            let email = $("#input-email").val();
+            let password = $("#input-password").val();
+            let message = ""
+
+            if (email.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) == null) {
+                message += "Електронна пошта не відповідає формату.";
+            }
+
+            if (password.match(/(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/) == null) {
+                if (message !== "") {
+                    message += "<br>";
+                }
+                message += "Пароль не відповідає формату.";
+            }
+            return message;
+        }
+    </script>
 </body>
 </html>

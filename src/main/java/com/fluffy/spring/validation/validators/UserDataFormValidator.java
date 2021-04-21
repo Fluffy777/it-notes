@@ -1,9 +1,9 @@
-package com.fluffy.spring.validation.validators.users;
+package com.fluffy.spring.validation.validators;
 
 import com.fluffy.spring.controllers.AuthController;
 import com.fluffy.spring.domain.User;
 import com.fluffy.spring.services.UserService;
-import com.fluffy.spring.validation.forms.users.UserDataForm;
+import com.fluffy.spring.validation.forms.UserDataForm;
 import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,42 +11,65 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Клас валідатора форми із даними профілю.
+ * @author Сивоконь Вадим
+ */
 @Service
 public class UserDataFormValidator extends SignUpFormValidator {
+    /**
+     * Бін для шифрування паролів.
+     */
     private final PasswordEncoder passwordEncoder;
 
-    public UserDataFormValidator(UserService userService, PasswordEncoder passwordEncoder, Environment env) {
+    /**
+     * Створює об'єкт (бін) валідатора.
+     * @param userService сервіс для отримання даних про користувачів
+     * @param env бін для отримання значень властивостей
+     * @param passwordEncoder бін для шифрування паролів
+     */
+    public UserDataFormValidator(final UserService userService, final PasswordEncoder passwordEncoder, final Environment env) {
         super(userService, env);
         this.passwordEncoder = passwordEncoder;
     }
 
-    private boolean matchWithWildcards(String first, String second) {
-        if (first.length() == 0 && second.length() == 0)
+    private boolean matchWithWildcards(final String first, final String second) {
+        if (first.length() == 0 && second.length() == 0) {
             return true;
+        }
 
-        if (first.length() > 1 && first.charAt(0) == '*' &&
-                second.length() == 0)
+        if (first.length() > 1 && first.charAt(0) == '*'
+                && second.length() == 0) {
             return false;
+        }
 
-        if ((first.length() > 1 && first.charAt(0) == '?') ||
-                (first.length() != 0 && second.length() != 0 &&
-                        first.charAt(0) == second.charAt(0)))
+        if ((first.length() > 1 && first.charAt(0) == '?')
+                || (first.length() != 0 && second.length() != 0
+                && first.charAt(0) == second.charAt(0))) {
             return matchWithWildcards(first.substring(1),
                     second.substring(1));
+        }
 
-        if (first.length() > 0 && first.charAt(0) == '*')
-            return matchWithWildcards(first.substring(1), second) ||
-                    matchWithWildcards(first, second.substring(1));
+        if (first.length() > 0 && first.charAt(0) == '*') {
+            return matchWithWildcards(first.substring(1), second)
+                    || matchWithWildcards(first, second.substring(1));
+        }
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public boolean supports(Class<?> clazz) {
+    public boolean supports(final Class<?> clazz) {
         return clazz.equals(UserDataForm.class);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void validate(Object target, Errors errors) {
+    public void validate(final Object target, final Errors errors) {
         // повне перевизначення, оскільки не все вказувати є потрібним
         UserDataForm userDataForm = (UserDataForm) target;
 
@@ -119,5 +142,11 @@ public class UserDataFormValidator extends SignUpFormValidator {
         // перевірка на довжину опціональних рядків
         validateNullableStringByLength(userDataForm.getAddress(), Integer.parseInt(env.getProperty("application.validation.signUpForm.address.maxLength")), errors, "address", env.getProperty("signUpForm.address.tooLong"));
         validateNullableStringByLength(userDataForm.getAddress(), Integer.parseInt(env.getProperty("application.validation.userDataForm.description.maxLength")), errors, "address", env.getProperty("userDataForm.description.tooLong"));
+
+        if (errors.hasErrors()) {
+            logger.warn("Наявні помилки валідації: " + errors.getAllErrors());
+        } else {
+            logger.info("Валідація успішно завершена");
+        }
     }
 }
