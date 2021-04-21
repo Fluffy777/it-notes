@@ -2,6 +2,7 @@
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.Date" %>
 <%@ page import="org.springframework.core.env.Environment" %>
+<%@ page import="java.util.Locale" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
@@ -14,7 +15,7 @@
     String bdayValue = bday != null ? new SimpleDateFormat("dd/MM/yyyy").format(bday) : "";
 %>
 
-
+<!DOCTYPE html>
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
@@ -30,6 +31,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
 
     <link rel="stylesheet" href="<c:url value="/resources/static/css/style.css"/>">
+    <link rel="stylesheet" href="<c:url value="/resources/static/css/multi-level-dropdown.css"/>">
 </head>
 <body>
     <!-- header -->
@@ -40,7 +42,11 @@
             <div class="col-auto">
                 <form:form modelAttribute="userDataForm" class="border border-primary p-4 rounded" action="${pageContext.request.contextPath}/profile" method="post" enctype="multipart/form-data">
                     <div class="col-auto mb-3">
-                        <img class="profile__logo mb-2" id="thumbnail" src="<%="icons/" + userData.getId() + "/" + userData.getIcon()%>" alt="Фото">
+                        <% if (gender.equals(User.Gender.MALE)) { %>
+                            <img class="profile__logo mb-2" id="thumbnail" src="<%="icons/" + userData.getId() + "/" + userData.getIcon()%>" alt="Фото" onerror="this.onerror = null; this.src = `<c:url value="/resources/static/img/profile/male.png"/>`;">
+                        <% } else { %>
+                            <img class="profile__logo mb-2" id="thumbnail" src="<%="icons/" + userData.getId() + "/" + userData.getIcon()%>" alt="Фото" onerror="this.onerror = null; this.src = `<c:url value="/resources/static/img/profile/female.png"/>`;">
+                        <% }%>
                         <form:input path="icon" class="form-control" type="file" name="icon" id="input-icon" accept="image/png, image/jpeg"/>
                         <form:errors path="icon"/>
                     </div>
@@ -92,7 +98,7 @@
 
                         <div class="mb-3">
                             <label class="form-label" for="input-password">Пароль</label>
-                            <form:input path="password" class="form-control" type="password" name="password" id="input-password" maxlength="60" required="required"/>
+                            <form:input path="password" class="form-control" type="password" name="password" id="input-password" maxlength="60"/>
                             <form:errors path="password"/>
                         </div>
 
@@ -143,21 +149,114 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
 
     <!-- JQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="<c:url value="/resources/static/js/jquery-3.6.0.min.js"/>"></script>
+
+    <!-- alert -->
+    <jsp:include page="/WEB-INF/components/alert.jsp"/>
+    <script src="<c:url value="/resources/static/js/alert.js"/>"></script>
 
     <script>
-        $('#input-icon').change(function() {
-            showImageThumbnail(this);
+        $(document).ready(function() {
+            $('#input-icon').change(function() {
+                showImageThumbnail(this);
+            });
+
+            function showImageThumbnail(fileInput) {
+                file = fileInput.files[0];
+                reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#thumbnail').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(file);
+            }
+
+            initValidation();
         });
 
-        function showImageThumbnail(fileInput) {
-           file = fileInput.files[0];
-           reader = new FileReader();
-           reader.onload = function(e) {
-               $('#thumbnail').attr('src', e.target.result);
-           }
+        function initValidation() {
+            $("form").submit(function (event) {
+                let message = validate();
+                if (message !== "") {
+                    customAlert("danger", "Помилка", message);
+                    event.preventDefault();
+                }
+            });
 
-           reader.readAsDataURL(file);
+            $("#input-bday").on("input", function() {
+                let length = this.value.length;
+                if (length === 2 || length === 5) {
+                    this.value = this.value + "/";
+                }
+            });
+        }
+
+        function validate() {
+            let firstName = $("#input-first-name").val();
+            let lastName = $("#input-last-name").val();
+            let email = $("#input-email").val();
+            let password = $("#input-password").val();
+            let newPassword = $("#input-new-password").val();
+            let newPasswordAgain = $("#input-new-password-again").val();
+            let bday = $("#input-bday").val();
+            let message = "";
+
+            if (firstName.match(/^[A-ZА-Я][a-zа-яA-ZА-Я-]{1,48}[a-zа-яA-ZА-Я]$/) == null) {
+                message += "Ім'я не відповідає формату.";
+            }
+
+            if (lastName.match(/^[A-ZА-Я][a-zа-яA-ZА-Я-]{1,48}[a-zа-яA-ZА-Я]$/ == null)) {
+                if (message !== "") {
+                    message += "<br>";
+                }
+                message += "Прізвище не відповідає формату.";
+            }
+
+            if (email.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) == null) {
+                if (message !== "") {
+                    message += "<br>";
+                }
+                message += "Електронна пошта не відповідає формату.";
+            }
+
+            if (password !== "") {
+                // користувач вирішив вказати пароль, що є необов'язковим для
+                // звичайних змін, та обов'язковим під час зміни пароля
+
+                if (newPassword === "" && newPasswordAgain === "") {
+                    // користувач тоді просто ввів пароль без наміру його зміни
+                    // можемо пароль ще раз перевірити введений пароль
+                    if (password.match(/(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/) == null) {
+                        message += "Пароль не відповідає формату.";
+                    }
+                } else if (newPassword === newPasswordAgain) {
+                    // випадок, коли користувач вказує три паролі для зміни
+                    // початкового (де password - початковий) - тоді треба
+                    // перевірити один із них
+                    if (newPassword.match(/(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/) == null) {
+                        message += "Новий пароль не відповідає формату.";
+                    }
+                } else {
+                    // newPassword та newPasswordAgain різні
+                    message += "Паролі не співпадають";
+                }
+            } else {
+                // користувач пароль не вказував
+                if ((newPassword !== "") || (newPasswordAgain !== "")) {
+                    // новий пароль не є порожнім - користувач намагається змінити
+                    // пароль без вказання попереднього, що не можна (перевірка
+                    // формату не є необхідною)
+                    message += "Для зміни пароля треба вказати попередній.";
+                }
+            }
+
+            if (bday.match(/^(?:(?:(?:0[1-9]|1\d|2[0-8])\/(?:0[1-9]|1[0-2])|(?:29|30)\/(?:0[13-9]|1[0-2])|31\/(?:0[13578]|1[02]))\/[1-9]\d{3}|29\/02(?:\/[1-9]\d(?:0[48]|[2468][048]|[13579][26])|(?:[2468][048]|[13579][26])00))$/) == null) {
+                if (message !== "") {
+                    message += "<br>";
+                }
+                message += "Дата народження не відповідає формату.";
+            }
+            return message;
         }
     </script>
 </body>

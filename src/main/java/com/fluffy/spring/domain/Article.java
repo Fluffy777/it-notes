@@ -1,82 +1,164 @@
 package com.fluffy.spring.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.sql.Date;
 
+/**
+ * Клас моделі статті.
+ * @author Сивоконь Вадим
+ */
 public class Article {
+    /**
+     * ID статті.
+     */
     private int id;
-    private Category category;
-    private User user;
-    private String name;
-    private String content;
-    private Date modificationDate;
-    private int views;
 
+    /**
+     * Категорія.
+     */
+    private Category category;
+
+    /**
+     * Автор.
+     */
+    private User user;
+
+    /**
+     * Назва.
+     */
+    private String name;
+
+    /**
+     * Контент.
+     */
+    private String content;
+
+    /**
+     * Дата оновлення.
+     */
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private Date modificationDate;
+
+    /**
+     * Кількість переглядів.
+     */
+    private Integer views;
+
+    /**
+     * Створює порожню модель статті.
+     */
+    public Article() { }
+
+    /**
+     * Повертає ID статті.
+     * @return ID статті.
+     */
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
+    /**
+     * Встановлює ID статті.
+     * @param id ID статті.
+     */
+    public void setId(final int id) {
         this.id = id;
     }
 
+    /**
+     * Повертає категорію.
+     * @return категорія
+     */
     public Category getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    /**
+     * Встановлює категорію.
+     * @param category категорія
+     */
+    public void setCategory(final Category category) {
         this.category = category;
     }
 
+    /**
+     * Повертає автора.
+     * @return автор
+     */
     public User getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    /**
+     * Встановлює автора.
+     * @param user автор
+     */
+    public void setUser(final User user) {
         this.user = user;
     }
 
+    /**
+     * Повертає назву.
+     * @return назва
+     */
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    /**
+     * Встановлює назву.
+     * @param name назва
+     */
+    public void setName(final String name) {
         this.name = name;
     }
 
+    /**
+     * Повертає контент.
+     * @return контент
+     */
     public String getContent() {
         return content;
     }
 
-    public void setContent(String content) {
+    /**
+     * Встановлює контент.
+     * @param content контент
+     */
+    public void setContent(final String content) {
         this.content = content;
     }
 
+    /**
+     * Повертає дату оновлення.
+     * @return дата оновлення
+     */
     public Date getModificationDate() {
         return modificationDate;
     }
 
-    public void setModificationDate(Date modificationDate) {
+    /**
+     * Встановлює дату оновлення.
+     * @param modificationDate дата оновлення
+     */
+    public void setModificationDate(final Date modificationDate) {
         this.modificationDate = modificationDate;
     }
 
-    public int getViews() {
+    /**
+     * Повертає кількість переглядів.
+     * @return кількість переглядів
+     */
+    public Integer getViews() {
         return views;
     }
 
-    public void setViews(int views) {
+    /**
+     * Встановлює кількість переглядів.
+     * @param views кількість переглядів
+     */
+    public void setViews(final Integer views) {
         this.views = views;
-    }
-
-    @Override
-    public String toString() {
-        return "Article{" +
-                "id=" + id +
-                ", category=" + category +
-                ", user=" + user +
-                ", name='" + name + '\'' +
-                ", content='" + content + '\'' +
-                ", modificationDate=" + modificationDate +
-                ", views=" + views +
-                '}';
     }
 }

@@ -1,75 +1,86 @@
 package com.fluffy.spring.controllers;
 
-import com.fluffy.spring.domain.Article;
-import com.fluffy.spring.domain.Category;
-import com.fluffy.spring.services.ArticleService;
-import com.fluffy.spring.services.CategoryService;
-import com.fluffy.spring.services.UserService;
-import com.fluffy.spring.validation.forms.articles.ArticleForm;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.apache.log4j.Logger;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.Validator;
-import org.springframework.web.bind.WebDataBinder;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
-import javax.validation.Valid;
-import java.util.Date;
-
+/**
+ * Клас контролера, що надає доступ до сторінок, призначених виключно для
+ * адміністратора. Перехід на JSP-сторінки, назви яких повертаються,
+ * відбувається за рахунок визначеного біна ViewResolver'а.
+ * @author Сивоконь Вадим
+ */
 @Controller
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminUIController {
-    private final Validator aritcleFormValidator;
-    private final ArticleService articleService;
-    private final CategoryService categoryService;
-    private final UserService userService;
+    /**
+     * Для забезпечення логування.
+     */
+    private static final Logger logger = Logger.getLogger(AdminUIController.class);
 
-    public AdminUIController(@Qualifier("articleFormValidator") Validator aritcleFormValidator,
-                             ArticleService articleService,
-                             CategoryService categoryService,
-                             UserService userService) {
-        this.aritcleFormValidator = aritcleFormValidator;
-        this.articleService = articleService;
-        this.categoryService = categoryService;
-        this.userService = userService;
-    }
-
-    @InitBinder("articleForm")
-    protected void signUpFormInitBinder(WebDataBinder binder) {
-        binder.setValidator(aritcleFormValidator);
-    }
-
+    /**
+     * Перехід на сторінку для створення статті.
+     * @return назва сторінки для створення статті
+     */
     @GetMapping("/articles/create")
-    public String createArticleView(ModelMap modelMap) {
-        modelMap.addAttribute("articleForm", new ArticleForm());
+    public String createArticleView() {
+        logger.info("Здійснений перехід на сторінку створення статті");
         return "articles/create";
     }
 
-    @PostMapping("/articles/create")
-    public String createArticle(
-            @Valid @ModelAttribute(name = "articleForm") ArticleForm articleForm,
-            BindingResult result) {
-        if (result.hasErrors()) {
-            return "/articles/create";
-        }
+    /**
+     * Перехід на сторінку для редагування статті.
+     * @param model модель для передачі додаткових даних
+     * @param id ID статті
+     * @return назва сторінки для редагування статті
+     */
+    @GetMapping("/articles/edit/{id}")
+    public String editArticleView(final Model model, @PathVariable final int id) {
+        model.addAttribute("articleId", id);
+        logger.info("Здійснений перехід на сторінку редагування статті із id = " + id);
+        return "articles/edit";
+    }
 
-        String categoryName = articleForm.getCategory();
-        if (categoryService.findByName(categoryName) == null) {
-            // такої категорії ще не існує - треба її створити
-            Category category = new Category();
-            category.setName(categoryName);
-            categoryService.create(category);
-        }
+    /**
+     * Перехід на сторінку для створення категорії.
+     * @return назва сторінки для створення категорії
+     */
+    @GetMapping("/categories/create")
+    public String createCategoryView() {
+        logger.info("Здійснений перехід на сторінку для створення категорії");
+        return "categories/create";
+    }
 
-        Article article = articleForm.buildArticle(categoryService);
-        article.setUser(userService.findByEmail(AuthController.getCurrentUsername()));
-        article.setModificationDate(new java.sql.Date(new Date().getTime()));
-        articleService.create(article);
-        return "redirect:/";
+    /**
+     * Перехід на сторінку для редагування категорії.
+     * @return назва сторінки для редагування категорії
+     */
+    @GetMapping("/categories/edit")
+    public String editCategoryView() {
+        logger.info("Здійснений перехід на сторінку для редагування категорії");
+        return "categories/edit";
+    }
+
+    /**
+     * Перехід на сторінку для видалення категорії.
+     * @return назва сторінки для видалення категорії
+     */
+    @GetMapping("/categories/delete")
+    public String deleteCategoryView() {
+        logger.info("Здійснений перехід на сторінку для видалення категорії");
+        return "categories/delete";
+    }
+
+    /**
+     * Перехід на сторінку для видалення користувача.
+     * @return назва сторінки для видалення користувача
+     */
+    @GetMapping("/users/delete")
+    public String deleteUserView() {
+        logger.info("Здійснений перехід на сторінку для видалення користувача");
+        return "users/delete";
     }
 }
